@@ -1,7 +1,7 @@
 <?php
 class Route
 {
-	public $root = array("home","index");
+	public $root = array("home","construction");
 	public $bind = array(
 		"sayfa"=> array(
 			'controller' => 'home',

@@ -58,14 +58,31 @@ class Model
 	}
 
 	/* get from array to set keys */
-	public function get($array){
+	public function get($array,$order=null){
 		$pk = $this->getPrimaryKey();
 		$this->db->select();
 		if(is_array($array)){
 			$this->db->where($array);
 		}
 		
-		$this->db->orderBy($pk,false);
+		if(!is_null($order)){
+			if(is_array($order)){
+				$column = $order['column'];
+				$desc = isset($order['desc']) ? $order['desc'] : false;
+				$asc = isset($order['asc']) ? $order['asc'] : false;
+				if($desc){
+					$opt = false;
+				}else if($asc){
+					$opt = true;
+				}else{
+					$opt = false;
+				}
+				
+				$this->db->orderBy($colmn,$opt);
+			}
+		}else{
+			$this->db->orderBy($pk,false);
+		}
 		$this->db->query();
 		
 		//print_r($this->db->output->fetch());
@@ -98,6 +115,7 @@ class Model
 	public function special($options=array(
 		"select" => array(),
 		"where" => array(),
+		"whereOpts" => array("exclude" => array(), "or" => null),
 		"groupBy" => array(),
 		"orderBy" => array(),
 		"limit" => array(),
@@ -111,11 +129,22 @@ class Model
 				$this->db->select();
 			
 			if(is_array($options['where']))
-				$this->db->where($options['where']);
+				if(is_array($options['whereOpts'])){
+					$or = is_bool($options['whereOpts']['or']) ?  $options['whereOpts']['or'] : false;
+					$exclude = is_array($options['whereOpts']['exclude']) ?  $options['whereOpts']['exclude'] : null;
+					$this->db->where($options['where'],$exclude,$or);
+				}else{
+					$this->db->where($options['where']);
+				}
+				
+				
+				
 			
+			if(!is_null($options['extra']))
+				$this->db->extra($options['extra']);
 			
-			if(isset($options['groupBy'][0]) && is_bool($options['groupBy'][1]))
-				$this->db->groupBy($options['groupBy'][0],$options['groupBy'][1]);
+			if(isset($options['groupBy']))
+				$this->db->groupBy($options['groupBy']);
 				
 			if(isset($options['orderBy'][0]) && is_bool($options['orderBy'][1]))
 				$this->db->orderBy($options['orderBy'][0],$options['orderBy'][1]);
@@ -123,8 +152,7 @@ class Model
 			if(isset($options['limit'][0]) && is_numeric($options['limit'][0]) && is_numeric($options['limit'][1]))
 				$this->db->limit($options['limit'][0],$options['limit'][1]);
 			
-			if(!is_null($options['extra']))
-				$this->db->extra($options['extra']);
+			
 			
 			$run = true;
 		}else if(isset($options)){

@@ -68,7 +68,6 @@ class DB
 				$this->boot->err('Query Failed: '.$error[2]);
 				$this->boot->err('<br> Query: '.$this->_query);
 			}
-			return false;
 		}
 	}
 
@@ -138,14 +137,15 @@ class DB
 		}
 	}
 
-	public function where($data,$exclude=null){
+	public function where($data,$exclude=null,$or=false){
 		$output=null;
 		if(is_array($data)){
 			$last_key=key(array_slice($data, -1,1, TRUE));
 			foreach($data as $key => $value){
 				$output.="$key='$value'";
 				if($key!=$last_key){
-					$output.=" AND ";
+					if($or) $output.=" OR ";
+					else $output.=" AND ";
 				}
 			}
 		}
@@ -201,10 +201,8 @@ class DB
     	$this->_query .= " ORDER BY ".$object." ".$asc;
     }
 
-    public function groupBy($object=null,$asc=true){
-    	if($asc) $asc = "ASC";
-    	else $asc = "DESC";
-    	$this->_query .= " GROUP BY ".$object." ".$asc;
+    public function groupBy($object){
+	    if(isset($object)) $this->_query .= " GROUP BY ".$object;
     }
 
     public function limit($start=0,$end=200){
@@ -309,7 +307,7 @@ class DB
 					foreach($data as $key => $value){
 						$output.="$key REGEXP '$value'";
 						if($key!=$last_key){
-							$output.= $config['or'] ? " OR " : "AND";
+							$output.= $config['or'] ? " OR " : " AND ";
 						}
 					}
 				}
@@ -409,6 +407,77 @@ class DB
 	private function is_iterable($var)
 	{
 			return $var !== null && (is_array($var) || $var instanceof Iterator || $var instanceof IteratorAggregate);
+	}
+	
+	
+	public function searchColumn($column=null){
+		if(!is_null($column)){
+			
+			if(is_array($column)){
+				$output1=null;
+				$output2=null;
+				$last_key=key(array_slice($column, -1,1, TRUE));
+				foreach($column as $key => $val){
+					$output1.="'$key'";
+					$output2.="$key";
+					if($key!=$last_key){
+						$output1.=",";
+						$output2.=",";
+					}
+				}
+				
+				
+				$this->_query = 'SELECT DISTINCT TABLE_NAME 
+		    					FROM INFORMATION_SCHEMA.COLUMNS
+								WHERE COLUMN_NAME IN ('.$output1.')
+								AND TABLE_SCHEMA=\''.$this->_config['database'].'\'';
+			
+			
+				$this->query();
+				
+				$tables = $this->output->fetchAll();
+				foreach($tables as $tb){
+					
+					$output=null;
+					$last_key=key(array_slice($column, -1,1, TRUE));
+					
+					foreach($column as $key => $val){
+						$output.="$key LIKE '%$val%'";
+						if($key!=$last_key){
+							$output.=" OR ";
+						}
+					}
+					$this->_query = 'SELECT '.$output2.' FROM '.$tb['TABLE_NAME'];
+					$this->_query.=" WHERE ".$output;
+					
+					
+					$this->query();
+					$find[$tb['TABLE_NAME']]=$this->output->fetchAll();
+				}
+				return $find;
+			}else{
+				$output='\''.$column.'\'';
+				$this->_query = 'SELECT DISTINCT TABLE_NAME 
+		    					FROM INFORMATION_SCHEMA.COLUMNS
+								WHERE COLUMN_NAME IN ('.$output.')
+								AND TABLE_SCHEMA=\''.$this->_config['database'].'\'';
+			
+			
+				$this->query();
+				
+				$tables = $this->output->fetchAll();
+				foreach($tables as $tb){
+					$this->_query = 'SELECT '.$column.' FROM '.$tb['TABLE_NAME'];
+					$this->query();
+					$find[$tb['TABLE_NAME']]=$this->output->fetchAll();
+					
+				}
+				return $find;
+			}
+			
+			return false;
+		}
+		
 	}
 }
 ?>

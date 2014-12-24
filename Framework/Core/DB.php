@@ -142,7 +142,7 @@ class DB
 		if(is_array($data)){
 			$last_key=key(array_slice($data, -1,1, TRUE));
 			foreach($data as $key => $value){
-				$output.="$key='$value'";
+				$output.="`$key`='$value'";
 				if($key!=$last_key){
 					if($or) $output.=" OR ";
 					else $output.=" AND ";
@@ -152,7 +152,7 @@ class DB
 		if(is_array($exclude)){
 			$last_key2=key(array_slice($exclude, -1,1, TRUE));
 			foreach($exclude as $key => $value){
-				$output.="$key!='$value'";
+				$output.="`$key`!='$value'";
 				if($key!=$last_key2){
 					$output.=" AND ";
 				}

@@ -216,7 +216,7 @@ class DB
 		$last_key=key(array_slice($data, -1,1, TRUE));
 		if(is_array($data)){
 			foreach($data as $key => $value){
-				$output.="$key='$value'";
+				$output.="`$key`='$value'";
 				if($key!=$last_key){
 					$output.=", ";
 				}

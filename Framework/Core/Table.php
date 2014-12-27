@@ -28,12 +28,12 @@ class Table
   )){
     $this->model = new $model();
     
-    foreach($options as $option => $content){
-	  if($option == "search" && isset($content) && is_array($content)){
+    
+	  if($options["search"] && is_array($options["search"])){
 		  foreach ($this->model->search() as $key) {
-				$sq[$key] = $content[0];
+				$sq[$key] = $options["search"][0];
 			}
-		  $this->model->db->search($sq,$content[1]);
+		  $this->model->db->search($sq,$options["search"][1]);
 		  $this->model->db->query();
 		  if($this->model->db->output){
 			  $this->arr = $this->model->db->output->fetchAll();
@@ -46,18 +46,17 @@ class Table
 		  }
 	  }else{
 		  $this->model->db->select();
-		  if($option == "where" && isset($content) && is_array($content)) $this->model->db->where($content);
-	      if($option == "orderby" && isset($content) && is_array($content)) $this->model->db->orderBy($content[0],$content[1]);
-	      if($option == "groupby" && isset($content) && is_array($content)) $this->model->db->groupBy($content[0],$content[1]);
-	      if($option == "limit" && isset($content) && is_array($content)){
-	        $this->start = $content[0];
-	        $this->model->db->limit($content[0],$content[1]);
-	      }
+		  if($options["where"] && is_array($options["where"])) $this->model->db->where($content);
+		  if($options["orderby"] && is_array($options["orderby"])) $this->model->db->orderBy($options["orderby"][0],$options["orderby"][1]);
+		  if($options["groupby"] && isset($options["groupby"])) $this->model->db->groupBy($options["groupby"]);
+		  if($options["limit"] && is_array($options["limit"])){
+		    $this->start = $options["limit"][0];
+		    $this->model->db->limit($options["limit"][0],$options["limit"][1]);
+		  }
 		  $this->model->db->query();
 		  $this->arr = $this->model->db->output->fetchAll();
 		  $this->count = $this->model->count();	
 	  }
-    }
   }
 
   /*

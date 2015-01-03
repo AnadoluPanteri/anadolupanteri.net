@@ -479,5 +479,16 @@ class DB
 		}
 		
 	}
+	
+	public static function getLastKey($data){
+		if(!is_array($data)) return false;
+		return key(array_slice($data, -1,1, TRUE));
+	}
+	
+	public function cQuery($query){
+		$this->_query = $query;
+		$this->query();
+		return $this->output;
+	}
 }
 ?>

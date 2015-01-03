@@ -24,10 +24,11 @@ class Model
 		$this->db->delete();
 		if(is_array($id)){
 			$this->db->where($id);
+			$this->db->run();
 		}else if(is_numeric($id)){
 			$this->db->where(array('id' => $id));
+			$this->db->run();
 		}
-		$this->db->run();
 	}
 
 	/* save/insert from this keys */

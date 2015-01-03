@@ -46,7 +46,7 @@ class Table
 		  }
 	  }else{
 		  $this->model->db->select();
-		  if($options["where"] && is_array($options["where"])) $this->model->db->where($content);
+		  if($options["where"] && is_array($options["where"])) $this->model->db->where($options["where"]);
 		  if($options["orderby"] && is_array($options["orderby"])) $this->model->db->orderBy($options["orderby"][0],$options["orderby"][1]);
 		  if($options["groupby"] && isset($options["groupby"])) $this->model->db->groupBy($options["groupby"]);
 		  if($options["limit"] && is_array($options["limit"])){
@@ -106,6 +106,9 @@ class Table
         foreach($headers as $row => $customname){
           $this->out .= "<th>".$customname."</th>";
         }
+        
+        
+        
         if($actions != null) $this->out .= "<th class='row actions'></th>";
         $this->out .= "</tr></thead>";
       }
@@ -149,6 +152,9 @@ class Table
           }
 
           if($actions != null) $this->out .= "<td>".str_replace("%primaryKey%",$arr[$i][$primaryKey],$actions)."</td>";
+          
+          
+          
           $this->out.= "</tr>";
 
         }
@@ -242,6 +248,7 @@ class Table
 	    }
 	
 	    $this->out .= str_replace("%buttons%",$button,$options['html']);
+	    return str_replace("%buttons%",$button,$options['html']);
 	}
   }
 

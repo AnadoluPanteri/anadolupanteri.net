@@ -4,10 +4,10 @@ class Text
 	public function convert($text,$lang_input,$lang_output, $strstat=false) {
 		switch($lang_input){
 			case 'tr':
-				$search = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ');
+				$search = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ','\'');
 				break;
 			case 'en':
-				$search = array('c','c','g','g','i','i','o','o','s','s','u','u','_');
+				$search = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_');
 				break;
 
 				/* başka diller eklenecek */
@@ -15,10 +15,10 @@ class Text
 
 		switch($lang_output){
 			case 'tr':
-				$replace = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ');
+				$replace = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ','\'');
 				break;
 			case 'en':
-				$replace = array('c','c','g','g','i','i','o','o','s','s','u','u','_');
+				$replace = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_');
 				break;
 
 				/* başka diller eklenecek */

@@ -127,6 +127,7 @@ class DB
 			}
 			$output.=") VALUES (";
 			foreach($data as $key => $value){
+				$value = str_replace("'","\'",$value);
 				$output.="'$value'";
 				if($key!=$last_key){
 					$output.=", ";
@@ -216,6 +217,7 @@ class DB
 		$last_key=key(array_slice($data, -1,1, TRUE));
 		if(is_array($data)){
 			foreach($data as $key => $value){
+				$value = str_replace("'","\'",$value);
 				$output.="`$key`='$value'";
 				if($key!=$last_key){
 					$output.=", ";

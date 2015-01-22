@@ -57,6 +57,7 @@ class Table
 		  $this->arr = $this->model->db->output->fetchAll();
 		  $this->count = $this->model->count();	
 	  }
+	  
   }
 
   /*

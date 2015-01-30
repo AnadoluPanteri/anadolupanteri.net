@@ -155,8 +155,8 @@ class SitemapGenerator
         if ($this->maxURLsPerSitemap > 50000)
             throw new InvalidArgumentException("More than 50,000 URLs per single sitemap is not allowed.");
 
-        $generatorInfo = '<!-- generator="Odiac Sitemap Generator/'.$this->classVersion.'" -->
-                          <!-- sitemap-generator-url="http://www.odiacfw.org"
+        $generatorInfo = '<!-- generator="BlueJacket Sitemap Generator/'.$this->classVersion.'" -->
+                          <!-- sitemap-generator-url="http://www.bluejacket.io"
                           sitemap-generator-version="'.$this->classVersion.'" -->
                           <!-- generated-on="'.date('c').'" -->';
         $sitemapHeader = '<?xml version="1.0" encoding="UTF-8"?>'.$generatorInfo.'

@@ -45,10 +45,10 @@ class Bower
 				if($t=="js"){
 					if(is_array($files)){
 						foreach($files as $file){
-							$this->html .= $this->css($this->folder."/".$file.".js");
+							$this->html .= $this->js($this->folder."/".$file.".js");
 						}
 					}else{
-						$this->html .= $this->css($this->folder."/".$files.".js");
+						$this->html .= $this->js($this->folder."/".$files.".js");
 					}
 					
 				}

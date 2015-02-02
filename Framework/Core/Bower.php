@@ -15,8 +15,6 @@ class Bower
 		if(isset($name)){
 			$this->folder .= "/".$name;
 		}
-		
-		print_r($folder);
 	
 		if(is_file($this->folder."/bower.json")){
 			if(isset($target)){

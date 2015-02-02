@@ -5,9 +5,9 @@ class Bower
 	public $target="dist";
 	public $folder=null;
 	public $html=null;
-	function __construct($name,$target,$componentsFolder){
-		if(isset($compentsFolder)){
-			$this->folder .= $compentsFolder;
+	function __construct($name,$target=null,$componentsFolder=null){
+		if(!is_null($componentsFolder)){
+			$this->folder .= $componentsFolder;
 		}else{
 			$this->folder .= $this->componentsFolder;
 		}
@@ -15,9 +15,9 @@ class Bower
 		if(isset($name)){
 			$this->folder .= "/".$name;
 		}
-	
+		
 		if(is_file($this->folder."/bower.json")){
-			if(isset($target)){
+			if(!is_null($target)){
 				$this->folder .= "/".$target;
 			}else{
 				$this->folder .= "/".$this->target;

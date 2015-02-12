@@ -124,13 +124,13 @@ class Model
 	)){
 		
 		if(is_array($options)){
-			if(is_array($options['select']))
+			if(isset($options['select']) && is_array($options['select']))
 				$this->db->select($options['select']);
 			else
 				$this->db->select();
 			
-			if(is_array($options['where']))
-				if(is_array($options['whereOpts'])){
+			if(isset($options['where']) &&  is_array($options['where']))
+				if(isset($options['whereOpts']) && is_array($options['whereOpts'])){
 					$or = is_bool($options['whereOpts']['or']) ?  $options['whereOpts']['or'] : false;
 					$exclude = is_array($options['whereOpts']['exclude']) ?  $options['whereOpts']['exclude'] : null;
 					$this->db->where($options['where'],$exclude,$or);
@@ -141,7 +141,7 @@ class Model
 				
 				
 			
-			if(!is_null($options['extra']))
+			if(isset($options['extra']) && !is_null($options['extra']))
 				$this->db->extra($options['extra']);
 			
 			if(isset($options['groupBy']))

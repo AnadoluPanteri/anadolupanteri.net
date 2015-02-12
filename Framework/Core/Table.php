@@ -29,7 +29,7 @@ class Table
     $this->model = new $model();
     
     
-	  if($options["search"] && is_array($options["search"])){
+	  if(isset($options["search"]) && is_array($options["search"])){
 		  foreach ($this->model->search() as $key) {
 				$sq[$key] = $options["search"][0];
 			}
@@ -46,10 +46,10 @@ class Table
 		  }
 	  }else{
 		  $this->model->db->select();
-		  if($options["where"] && is_array($options["where"])) $this->model->db->where($options["where"]);
-		  if($options["orderby"] && is_array($options["orderby"])) $this->model->db->orderBy($options["orderby"][0],$options["orderby"][1]);
-		  if($options["groupby"] && isset($options["groupby"])) $this->model->db->groupBy($options["groupby"]);
-		  if($options["limit"] && is_array($options["limit"])){
+		  if(isset($options["where"]) && is_array($options["where"])) $this->model->db->where($options["where"]);
+		  if(isset($options["orderby"]) && is_array($options["orderby"])) $this->model->db->orderBy($options["orderby"][0],$options["orderby"][1]);
+		  if(isset($options["groupby"]) && isset($options["groupby"])) $this->model->db->groupBy($options["groupby"]);
+		  if(isset($options["limit"]) && is_array($options["limit"])){
 		    $this->start = $options["limit"][0];
 		    $this->model->db->limit($options["limit"][0],$options["limit"][1]);
 		  }
@@ -190,15 +190,18 @@ class Table
     "prev" => null,
     "next" => null
   )){
+	  
     $count = $this->count;
-    @$slice = round($count/$options['count']);
+    @$slice = $count/$options['count'];
+    @$slice = ceil($slice);
 	@$mod = $count % $options['count'];
 	if($slice > 1){
 		
-	
+		/*
 	    if($mod > 0){
 	      $slice = $slice + 1;
 	    }
+	    */
 	
 	    $button = null;
 	

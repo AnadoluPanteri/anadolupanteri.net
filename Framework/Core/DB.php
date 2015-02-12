@@ -371,6 +371,7 @@ class DB
 
 		$this->_query .= $output;
     }
+    */
 
     public function repair(){
 		header("Content-type: text/plain");
@@ -402,7 +403,7 @@ class DB
 		header("Content-type: text/html");
 		return $out2;
  	}
-  */
+  
 
  	public function addPrimaryKey($key){
 	 	$this->_query = "ALTER TABLE ".$this->_table." ADD PRIMARY KEY (".$key.")  ";

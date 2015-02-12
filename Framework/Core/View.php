@@ -158,5 +158,13 @@ class View
 	    ob_end_clean();
 	    return $output;
 	}
+	
+	public function arraySet($s,$a){
+		if(is_array($a)){
+			foreach($a as $k => $v){
+				$this->set($s."[".$k."]",$v);
+			}
+		}
+	}
 }
 ?>

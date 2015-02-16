@@ -12,7 +12,7 @@ class Upload
 		if(isset($this->file['uploadFolder'])){
 			$uploadFolder = $this->file['uploadFolder'];
 			
-			if(BASEDIR) $baseFolder = BASEDIR.'/';
+			/* if(SITE_ROOT) $baseFolder = SITE_ROOT.'/'; */
 		}
 
 		if($fileInput == array()) return false;
@@ -29,10 +29,12 @@ class Upload
 				
 				$normalPath = $uploadFolder.$newFileName;
 				
-				if(BASEDIR) $movePath = $baseFolder.$uploadFolder.$newFileName;
+				/*
+				if(SITE_ROOT) $movePath = $baseFolder.$uploadFolder.$newFileName;
 				else $movePath = $uploadFolder.$newFileName;
+				*/
 				
-
+				$movePath = $uploadFolder.$newFileName;
 				move_uploaded_file($fileInput["tmp_name"],$movePath);
 				//print_r($fileInput);
 				return array(

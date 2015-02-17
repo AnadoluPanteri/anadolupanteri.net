@@ -195,7 +195,7 @@ class Table
     @$slice = $count/$options['count'];
     @$slice = ceil($slice);
 	@$mod = $count % $options['count'];
-	if($slice > 1){
+	if($slice >= 1){
 		
 		/*
 	    if($mod > 0){

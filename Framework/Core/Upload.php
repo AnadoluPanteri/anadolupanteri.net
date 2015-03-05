@@ -11,7 +11,7 @@ class Upload
 		if(is_numeric($this->file['maxSize'])) $allowedMaxSize = $this->file['maxSize'];
 		if(isset($this->file['uploadFolder'])){
 			$uploadFolder = $this->file['uploadFolder'];
-			
+
 			/* if(SITE_ROOT) $baseFolder = SITE_ROOT.'/'; */
 		}
 
@@ -26,14 +26,14 @@ class Upload
 				$fileExt = end($fileExt);
 
 				$newFileName = $this->fixName($fileName)."_".rand(0,9999999).".".$fileExt;
-				
+
 				$normalPath = $uploadFolder.$newFileName;
-				
+
 				/*
 				if(SITE_ROOT) $movePath = $baseFolder.$uploadFolder.$newFileName;
 				else $movePath = $uploadFolder.$newFileName;
 				*/
-				
+
 				$movePath = $uploadFolder.$newFileName;
 				move_uploaded_file($fileInput["tmp_name"],$movePath);
 				//print_r($fileInput);

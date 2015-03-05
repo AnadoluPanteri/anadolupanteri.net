@@ -172,6 +172,6 @@ class HTML
   		return $output;
   	}
 
-    
+
 }
 ?>

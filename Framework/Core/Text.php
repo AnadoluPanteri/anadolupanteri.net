@@ -9,8 +9,6 @@ class Text
 			case 'en':
 				$search = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_');
 				break;
-
-				/* başka diller eklenecek */
 		}
 
 		switch($lang_output){
@@ -20,8 +18,6 @@ class Text
 			case 'en':
 				$replace = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_');
 				break;
-
-				/* başka diller eklenecek */
 		}
 		$text = trim($text);
 		$new_text = str_replace($search,$replace,$text);

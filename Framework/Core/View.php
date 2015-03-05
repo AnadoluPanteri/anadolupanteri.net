@@ -41,8 +41,6 @@ class View
 		@$this->_templateFile=$f1.$template.'.html';
 	}
 
-	/* get template */
-	/* MAKE: Cache Subclass */
 	public function _template($file){
 			ob_start();
 				extract($this->_vars);
@@ -53,7 +51,6 @@ class View
 	}
 
 
-	/* DEVRIM! */
 	public function _applyVars($file){
 		$source = file_get_contents($file);
 		$html = $this->_applyPartials($source);
@@ -70,7 +67,6 @@ class View
 		return $html;
 	}
 
-	/* içerik değiştirme sınıfı */
 	public function _changeContents($source){
 		foreach ($this->_vars as $key2 => $value2) {
 			if(@!is_array($value) && @!is_array($key)){
@@ -122,10 +118,6 @@ class View
 		return $start.''.$this->_getTagContent($start,$end,$content).''.$end;
 	}
 
-
-	/*
-		yeni load :: yeni versiyonlarda bu şekilde olacak.
-	*/
 	public function load($template,$folder=null){
 		$this->_generateCacheName($template,$folder);
 		ob_start();
@@ -158,7 +150,7 @@ class View
 	    ob_end_clean();
 	    return $output;
 	}
-	
+
 	public function arraySet($s,$a){
 		if(is_array($a)){
 			foreach($a as $k => $v){

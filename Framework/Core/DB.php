@@ -288,8 +288,8 @@ class DB
 			}else{
 				return;
 			}
-			
-			
+
+
 			if($config['filter']){
 				$last_key=key(array_slice($config['filter'], -1,1, TRUE));
 				if(is_array($config['filter'])){
@@ -334,10 +334,10 @@ class DB
 			$this->_query .= $output;
 
 		}
-		
+
 		public function custom($query){
 			$this->_query = $query;
-		} 
+		}
 
 		/*
     public function regexp($data,$filter=null,$extra=null){
@@ -403,7 +403,7 @@ class DB
 		header("Content-type: text/html");
 		return $out2;
  	}
-  
+
 
  	public function addPrimaryKey($key){
 	 	$this->_query = "ALTER TABLE ".$this->_table." ADD PRIMARY KEY (".$key.")  ";
@@ -413,11 +413,11 @@ class DB
 	{
 			return $var !== null && (is_array($var) || $var instanceof Iterator || $var instanceof IteratorAggregate);
 	}
-	
-	
+
+
 	public function searchColumn($column=null){
 		if(!is_null($column)){
-			
+
 			if(is_array($column)){
 				$output1=null;
 				$output2=null;
@@ -430,22 +430,22 @@ class DB
 						$output2.=",";
 					}
 				}
-				
-				
-				$this->_query = 'SELECT DISTINCT TABLE_NAME 
+
+
+				$this->_query = 'SELECT DISTINCT TABLE_NAME
 		    					FROM INFORMATION_SCHEMA.COLUMNS
 								WHERE COLUMN_NAME IN ('.$output1.')
 								AND TABLE_SCHEMA=\''.$this->_config['database'].'\'';
-			
-			
+
+
 				$this->query();
-				
+
 				$tables = $this->output->fetchAll();
 				foreach($tables as $tb){
-					
+
 					$output=null;
 					$last_key=key(array_slice($column, -1,1, TRUE));
-					
+
 					foreach($column as $key => $val){
 						$output.="$key LIKE '%$val%'";
 						if($key!=$last_key){
@@ -454,42 +454,42 @@ class DB
 					}
 					$this->_query = 'SELECT '.$output2.' FROM '.$tb['TABLE_NAME'];
 					$this->_query.=" WHERE ".$output;
-					
-					
+
+
 					$this->query();
 					$find[$tb['TABLE_NAME']]=$this->output->fetchAll();
 				}
 				return $find;
 			}else{
 				$output='\''.$column.'\'';
-				$this->_query = 'SELECT DISTINCT TABLE_NAME 
+				$this->_query = 'SELECT DISTINCT TABLE_NAME
 		    					FROM INFORMATION_SCHEMA.COLUMNS
 								WHERE COLUMN_NAME IN ('.$output.')
 								AND TABLE_SCHEMA=\''.$this->_config['database'].'\'';
-			
-			
+
+
 				$this->query();
-				
+
 				$tables = $this->output->fetchAll();
 				foreach($tables as $tb){
 					$this->_query = 'SELECT '.$column.' FROM '.$tb['TABLE_NAME'];
 					$this->query();
 					$find[$tb['TABLE_NAME']]=$this->output->fetchAll();
-					
+
 				}
 				return $find;
 			}
-			
+
 			return false;
 		}
-		
+
 	}
-	
+
 	public static function getLastKey($data){
 		if(!is_array($data)) return false;
 		return key(array_slice($data, -1,1, TRUE));
 	}
-	
+
 	public function cQuery($query){
 		$this->_query = $query;
 		$this->query();

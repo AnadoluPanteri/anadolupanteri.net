@@ -1,6 +1,6 @@
 <?php
 class API
-{ 
+{
 
     public $users;
 
@@ -36,7 +36,7 @@ class API
                 $this->where[$key]=$val;
             }
     }
-    
+
     public function basicAuth(){
         $username = null;
         $password = null;
@@ -45,8 +45,8 @@ class API
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $username = $_SERVER['PHP_AUTH_USER'];
             $password = $_SERVER['PHP_AUTH_PW'];
-            
-            
+
+
 
         // most other servers
         } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
@@ -127,22 +127,22 @@ class API
         }
         return json_encode($result);
     }
-    
+
     /*
-     * GET DATA API USE 
-     * 
+     * GET DATA API USE
+     *
      *  <script name>/<custom route>/<model>/<id|options>&<where array>&<where array>...
      *  @mode: your model
      *  @id: numeric
      *  @options: ?options=order:<row>,<true|false>|limit:<start>,<end>|group:<row>,<true|false>
      *  @where array: &<row>=<value>
-     * 
+     *
      *  example: get users, order by name, show only 10 data
      *  /index.php/json/users/?options=order:name,true|limit:0,10
-     * 
+     *
      *  example: get 1. user
      *  /index.php/json/users/1
-     * 
+     *
      *  example: show 'odiac' users
      *  /index.php/json/users/?name=odiac
      */
@@ -168,7 +168,7 @@ class API
             $where = null;
             $group = null;
             $order = null;
-            
+
             if(is_array($this->options)){
                 foreach ($this->options as $option) {
                     $opt = explode(":",$option);
@@ -176,25 +176,25 @@ class API
                     if($opt[0] == "order"){
                         $order = array($val[0],$val[1]);
                     }
-                    
+
                     if($opt[0] == "limit"){
                         $limit = array($val[0],$val[1]);
                     }
-                    
+
                     if($opt[0] == "group"){
                         $group = array($val[0],$val[1]);
                     }
                 }
             }
-            
+
             if(isset($this->where)){
                 $where = $this->where;
             }
-            
-            
-            
+
+
+
             $out = $get->special($where,$order,$limit,$group);
-            
+
             if(is_array($out)){
                 $result['status'] = true;
                 $i=0;
@@ -224,8 +224,8 @@ class API
                 $result['status'] = true;
             }
         }else{
-            if($post->save()){ 
-                $result['status'] = true; 
+            if($post->save()){
+                $result['status'] = true;
             }
         }
         return json_encode($result);

@@ -27,8 +27,8 @@ class Table
 		))
   )){
     $this->model = new $model();
-    
-    
+
+
 	  if(isset($options["search"]) && is_array($options["search"])){
 		  foreach ($this->model->search() as $key) {
 				$sq[$key] = $options["search"][0];
@@ -55,9 +55,9 @@ class Table
 		  }
 		  $this->model->db->query();
 		  $this->arr = $this->model->db->output->fetchAll();
-		  $this->count = $this->model->count();	
+		  $this->count = $this->model->count();
 	  }
-	  
+
   }
 
   /*
@@ -82,21 +82,21 @@ class Table
 		"id" => null,
 		"content" => null
 	)){
-    
 
-    
+
+
     if($this->model->db->output){
 		$this->out = "<table";
 	    $this->out .= $class != null ? " class='".$class."'" : null;
 	    $this->out .= $id != null ? " id='".$id."'" : null;
 	    $this->out .= ">";
-	   
+
       if(count($this->arr)==0){
 	      if(is_array($error)){
 		     $this->out = "<div ".($error['class'] != null ? "class=\"".$error['class']."\"" : null)." ".($error['id'] != null ? "id=\"".$error['id']."\"" : null).">".($error['content'] != null ? $error['content'] : null)."</div>";
 		     $this->error = true;
 		     return;
-	    } 
+	    }
       }
 
       if($headers != null && is_array($headers)){
@@ -107,9 +107,9 @@ class Table
         foreach($headers as $row => $customname){
           $this->out .= "<th>".$customname."</th>";
         }
-        
-        
-        
+
+
+
         if($actions != null) $this->out .= "<th class='row actions'></th>";
         $this->out .= "</tr></thead>";
       }
@@ -133,16 +133,16 @@ class Table
                   if($rw == $row){
                     $submodel = new $opts['model'];
                     $submodel->get(array($opts['extract'] => $arr[$i][$row]));
-                    
+
                     if(@is_numeric($submodel->id)){
 	                    $newurl = str_replace("%model%",$opts['model'],$opts['url']);
 	                    $newurl = str_replace("%id%",$submodel->id,$newurl);
-	                    $newurl = str_replace("%extract%",$submodel->$opts['extract'],$newurl);   
+	                    $newurl = str_replace("%extract%",$submodel->$opts['extract'],$newurl);
 	                    $this->out.="<td><a href=".$newurl.">".$submodel->$opts['output']."</a></td>";
                     }else{
 	                    $this->out.="<td>".$arr[$i][$row]."</td>";
                     }
-                    
+
                     $list[] = $row;
                   }
               }
@@ -153,9 +153,9 @@ class Table
           }
 
           if($actions != null) $this->out .= "<td>".str_replace("%primaryKey%",$arr[$i][$primaryKey],$actions)."</td>";
-          
-          
-          
+
+
+
           $this->out.= "</tr>";
 
         }
@@ -166,9 +166,9 @@ class Table
 	    if(is_array($error)){
 		     $this->out = "<div ".($error['class'] != null ? "class=\"".$error['class']."\"" : null)." ".($error['id'] != null ? "id=\"".$error['id']."\"" : null).">".($error['content'] != null ? $error['content'] : null)."</div>";
 		     $this->error = true;
-	    }  
+	    }
     }
-    
+
   }
 
 
@@ -190,24 +190,24 @@ class Table
     "prev" => null,
     "next" => null
   )){
-	  
+
     $count = $this->count;
     @$slice = $count/$options['count'];
     @$slice = ceil($slice);
 	@$mod = $count % $options['count'];
 	if($slice >= 1){
-		
+
 		/*
 	    if($mod > 0){
 	      $slice = $slice + 1;
 	    }
 	    */
-	
+
 	    $button = null;
-	
+
 	    if(isset($_GET['page']) && $_GET['page'] > 0) $prev = $_GET['page']-1;
 	    if(isset($_GET['page']) && $_GET['page'] > 0) $next = $_GET['page']+1;
-	
+
 	    if(@$options['prev'] != null && @$_GET['page'] > 0){
 	      $button .= "<div ";
 	      $button .= isset($options['button']['class']) && $options['button']['class'] != null ? " class='".$options['button']['class']."'" : null;
@@ -218,7 +218,7 @@ class Table
 	      $button .= isset($options['link']['id']) && $options['link']['id'] != null ? " id='".$options['link']['class']."'" : null;
 	      $button .=">".$options['prev']."</a></div>";
 	    }
-	
+
 	    $i=1;
 	    while($i<=$slice){
 	      if(@$_GET['page']){
@@ -228,7 +228,7 @@ class Table
 	        @$button_reverse = $i==1 ? $options['button']['reverse'] : null;
 	        @$lnk_reverse = $i==1 ? $options['link']['reverse'] : null;
 	      }
-	
+
 	      $button .= "<div ";
 	      $button .= isset($options['button']['class']) && $options['button']['class'] != null ? " class='".$options['button']['class'].$button_reverse."'" : null;
 	      $button .= isset($options['button']['id']) && $options['button']['id'] != null ? " id='".$options['button']['class']."'" : null;
@@ -239,7 +239,7 @@ class Table
 	      $button .=">".$i."</a></div>";
 	      $i++;
 	    }
-	
+
 	    if(@$options['next'] != null && $slice != @$_GET['page']){
 	      $button .= "<div ";
 	      $button .= isset($options['button']['class']) && $options['button']['class'] != null ? " class='".$options['button']['class']."'" : null;
@@ -250,7 +250,7 @@ class Table
 	      $button .= isset($options['link']['id']) && $options['link']['id'] != null ? " id='".$options['link']['class']."'" : null;
 	      $button .=">".$options['next']."</div>";
 	    }
-	
+
 	    $this->out .= str_replace("%buttons%",$button,$options['html']);
 	    return str_replace("%buttons%",$button,$options['html']);
 	}

@@ -10,19 +10,19 @@ class Bower
 		}else{
 			$this->folder .= $this->componentsFolder;
 		}
-		
+
 		if(isset($name)){
 			$this->folder .= "/".$name;
 		}
-		
+
 		if(is_file($this->folder."/bower.json")){
 			if(!is_null($target)){
 				$this->folder .= "/".$target;
 			}
 		}
 	}
-	
-	
+
+
 	public function generate($files = array(),$type = array()){
 		if(is_array($type)){
 			foreach($type as $t){
@@ -34,9 +34,9 @@ class Bower
 					}else{
 						$this->html .= $this->css($this->folder."/".$files.".css");
 					}
-					
+
 				}
-				
+
 				if($t=="js"){
 					if(is_array($files)){
 						foreach($files as $file){
@@ -45,7 +45,7 @@ class Bower
 					}else{
 						$this->html .= $this->js($this->folder."/".$files.".js");
 					}
-					
+
 				}
 			}
 		}
@@ -58,11 +58,11 @@ class Bower
       return '<link rel="stylesheet" type="text/css" href="/'.$obje.'"/>';
     }
   }
-  
+
   public function js($obje){
 		if(isset($obje) && $obje!=null){
 			return '<script type="text/javascript" src="/'.$obje.'"></script>';
 		}
-	}		
+	}
 }
 ?>

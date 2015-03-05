@@ -5,9 +5,9 @@ class ArraySort
 		if ($x==$y) {
 			krsort($array);
 		}else if($x!=$y) {
-			$formul = strtotime($y["date"]) - strtotime($x["date"]);
+			$formule = strtotime($y["date"]) - strtotime($x["date"]);
 		}
-		return $formul;
+		return $formule;
 	}
 
   public static function array_sort($array,$key){

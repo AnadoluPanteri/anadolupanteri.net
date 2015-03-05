@@ -1,6 +1,6 @@
 <?php
 /*
-  Odiac Framework's Security Class
+  BlueJacket Framework's Security Class
 
   Filtering contents and drop some insecuring content for HTML
 

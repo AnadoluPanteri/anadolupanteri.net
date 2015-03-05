@@ -65,7 +65,7 @@ class Model
 		if(is_array($array)){
 			$this->db->where($array);
 		}
-		
+
 		if(!is_null($order)){
 			if(is_array($order)){
 				$column = $order['column'];
@@ -78,14 +78,14 @@ class Model
 				}else{
 					$opt = false;
 				}
-				
+
 				$this->db->orderBy($colmn,$opt);
 			}
 		}else{
 			$this->db->orderBy($pk,false);
 		}
 		$this->db->query();
-		
+
 		//print_r($this->db->output->fetch());
 		$out = $this->db->output->fetch();
 		if(is_array($out)){
@@ -95,8 +95,8 @@ class Model
 			}
 			return $out;
 		}
-			
-		
+
+
 		return false;
 	}
 
@@ -122,13 +122,13 @@ class Model
 		"limit" => array(),
 		"extra" => null
 	)){
-		
+
 		if(is_array($options)){
 			if(isset($options['select']) && is_array($options['select']))
 				$this->db->select($options['select']);
 			else
 				$this->db->select();
-			
+
 			if(isset($options['where']) &&  is_array($options['where']))
 				if(isset($options['whereOpts']) && is_array($options['whereOpts'])){
 					$or = is_bool($options['whereOpts']['or']) ?  $options['whereOpts']['or'] : false;
@@ -137,35 +137,35 @@ class Model
 				}else{
 					$this->db->where($options['where']);
 				}
-				
-				
-				
-			
+
+
+
+
 			if(isset($options['extra']) && !is_null($options['extra']))
 				$this->db->extra($options['extra']);
-			
+
 			if(isset($options['groupBy']))
 				$this->db->groupBy($options['groupBy']);
-				
+
 			if(isset($options['orderBy'][0]) && is_bool($options['orderBy'][1]))
 				$this->db->orderBy($options['orderBy'][0],$options['orderBy'][1]);
-				
+
 			if(isset($options['limit'][0]) && is_numeric($options['limit'][0]) && is_numeric($options['limit'][1]))
 				$this->db->limit($options['limit'][0],$options['limit'][1]);
-			
-			
-			
+
+
+
 			$run = true;
 		}else if(isset($options)){
 			$this->db->custom($options);
-			
+
 			$run = true;
 		}else{
 			$run = false;
 		}
-		
-		
-		
+
+
+
 		if($run){
 			$this->db->query();
 			$result = @$this->db->output ? $this->db->output->fetchAll() : false;
@@ -220,7 +220,7 @@ class Model
 		return false;
 	}
 	*/
-	
+
 	public function getLastData(){
 		$this->db->_query="SELECT * FROM ".$this->db->_table." ORDER BY ". $this->getPrimaryKey()." DESC LIMIT 1,1";
 		$this->db->query();

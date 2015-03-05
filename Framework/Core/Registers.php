@@ -17,8 +17,10 @@ class Registers
       foreach($array as $key => $val){
         if($key == "password" || $key == "pass" || $key == "key"){
           $_SESSION[$key] = md5($val);
+          $this->{$key} = md5($val);
         }else{
           $_SESSION[$key] = $val;
+          $this->{$key} = $val;
         }
         if(@$timer!=null) setcookie($key,base64_encode($val),time()+60*60*$timer);
       }

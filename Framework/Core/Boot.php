@@ -31,7 +31,7 @@ class Boot
 
   public function init(){
     /*loader*/
-    
+
     $this->loader("Framework/Core/");
     $this->loader(APPFOLDER."/model/");
     $this->loader(APPFOLDER."/controller/");

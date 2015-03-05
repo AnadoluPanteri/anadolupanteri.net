@@ -69,6 +69,14 @@ class HTML
     }
   }
 
+  public static function css_template($obje,$templateFolder=null){
+    if(!is_null($templateFolder)) $templateFolder = TEMPLATE_FOLDER."/".$templateFolder."/";
+    else $templateFolder = DEFAULT_TEMPLATE_FOLDER;
+    if(isset($obje) && $obje!=null){
+      return '<link rel="stylesheet" type="text/css" href="/'.$templateFolder.$obje.'.css"/>';
+    }
+  }
+
 
 	public static function charset($type){
 		if(isset($type) && $type!=null){

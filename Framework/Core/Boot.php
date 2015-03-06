@@ -26,6 +26,8 @@ class Boot
 	if($config != null) $this->config($config);
   	$this->_controllerPath = APPFOLDER."/controller/";
   	$this->_pageNotFound = APPFOLDER."/public/404.html";
+    header('X-Powered-By: BlueJacket');
+    ini_set("expose_php","off");
   }
 
 

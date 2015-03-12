@@ -79,6 +79,8 @@ class Boot
         }
       }
     }
+    
+    
 
     $this->_loadUrl();
   }

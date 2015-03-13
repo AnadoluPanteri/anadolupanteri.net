@@ -16,7 +16,17 @@ class Upload
 		}
 
 		if($fileInput == array()) return false;
-
+		
+		if(is_array($fileInput["name"])){
+			foreach($fileInput as $k => $v){
+				foreach($v as $d => $e){
+					$f[$k] = $e;
+				}
+			}
+			$fileInput = $f;
+		}
+		
+		
 		if($this->check($fileInput,$allowedMaxSize,$allowedTypes)){
 			if(file_exists($uploadFolder.$fileInput["name"])){
 				return false;
@@ -36,7 +46,6 @@ class Upload
 
 				$movePath = $uploadFolder.$newFileName;
 				move_uploaded_file($fileInput["tmp_name"],$movePath);
-				//print_r($fileInput);
 				return array(
 					'input' => $fileInput,
 					'name' => $newFileName,
@@ -54,6 +63,7 @@ class Upload
 	public function check($fileInput,$fileSize,$fileType=array()){
 		$extention = false;
 		$size = false;
+		
 
 		$fileSize = $fileSize * (1024 * 1024);
 		$fileExt = explode(".", $fileInput['name']);

@@ -17,6 +17,13 @@ class Model
 		$this->db->drop();
 	}
 	*/
+	
+	public function setVars(Array $properties=array()){
+		foreach($properties as $key => $value){
+	      $this->{$key} = $value;
+				$this->_def[$key]=$value;
+	    }
+	}
 
 
 	/* delete from id */

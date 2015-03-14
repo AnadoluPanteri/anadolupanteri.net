@@ -59,41 +59,45 @@ class View
 	}
 
 	public function _applyPartials($html){
-		foreach ($this->_partials as $key => $val) {
-			$source = file_get_contents($val);
-			$html = $this->_changeContents($html);
-			$html = str_replace('{=' . $key . '}', $source, $html);
+		if(is_array($this->_partials)){
+			foreach ($this->_partials as $key => $val) {
+				$source = file_get_contents($val);
+				$html = $this->_changeContents($html);
+				$html = str_replace('{=' . $key . '}', $source, $html);
+			}
 		}
 		return $html;
 	}
 
 	public function _changeContents($source){
-		foreach ($this->_vars as $key2 => $value2) {
-			if(@!is_array($value) && @!is_array($key)){
-				@$source = str_replace('{$ ' . $key2 . ' }', $value2, $source);
-			}
-		}
-		@$source = str_replace($this->_dropTag('{$ ',' }',$source), '', $source);
-
-		if($this->_call){
-			foreach ($this->_call as $key3 => $val3) {
-				if(class_exists($key3)){
-					$cont = new $key3;
-				}else{
-					include 'controller/'.$key3.'.php';
-					$cont = new $key3;
-				}
-				foreach($val3 as $key4 => $value4){
-					$source = str_replace('{func ' . $key4 . ' }', $cont->$key4(), $source);
+		if(is_array($this->_vars)){
+			foreach ($this->_vars as $key2 => $value2) {
+				if(@!is_array($value) && @!is_array($key)){
+					@$source = str_replace('{$ ' . $key2 . ' }', $value2, $source);
 				}
 			}
+			@$source = str_replace($this->_dropTag('{$ ',' }',$source), '', $source);
+	
+			if($this->_call){
+				foreach ($this->_call as $key3 => $val3) {
+					if(class_exists($key3)){
+						$cont = new $key3;
+					}else{
+						include 'controller/'.$key3.'.php';
+						$cont = new $key3;
+					}
+					foreach($val3 as $key4 => $value4){
+						$source = str_replace('{func ' . $key4 . ' }', $cont->$key4(), $source);
+					}
+				}
+			}
+	
+	
+	
+			$source = str_replace($this->_dropTag("{* "," *}",$source), "<!-- ".$this->_getTagContent("{* "," *}",$source)." -->", $source);
+			$source = str_replace($this->_dropTag("{php}","{/php}",$source), eval($this->_getTagContent("{php}","{/php}",$source)), $source);
+	
 		}
-
-
-
-		$source = str_replace($this->_dropTag("{* "," *}",$source), "<!-- ".$this->_getTagContent("{* "," *}",$source)." -->", $source);
-		$source = str_replace($this->_dropTag("{php}","{/php}",$source), eval($this->_getTagContent("{php}","{/php}",$source)), $source);
-
 		return $source;
 	}
 
@@ -144,7 +148,7 @@ class View
 		ob_start();
 			$source = file_get_contents($file);
 			$html = $this->_applyPartials($source);
-			$html = $this->_changeContents($html);
+			if($html) $html = $this->_changeContents($html);
 			echo $html;
 	    	$output = ob_get_contents();
 	    ob_end_clean();

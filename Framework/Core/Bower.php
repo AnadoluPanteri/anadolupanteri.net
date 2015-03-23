@@ -15,10 +15,8 @@ class Bower
 			$this->folder .= "/".$name;
 		}
 
-		if(is_file($this->folder."/bower.json")){
-			if(!is_null($target)){
-				$this->folder .= "/".$target;
-			}
+		if(!is_null($target)){
+			$this->folder .= "/".$target;
 		}
 	}
 

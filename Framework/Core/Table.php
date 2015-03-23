@@ -204,11 +204,15 @@ class Table
 	    */
 
 	    $button = null;
+		
+		if(isset($_GET['page'])) $page = $_GET['page'];
+		else $page = 1;
+		
+		$prev = $page-1;
+	    $next = $page+1;
+	    
 
-	    if(isset($_GET['page']) && $_GET['page'] > 0) $prev = $_GET['page']-1;
-	    if(isset($_GET['page']) && $_GET['page'] > 0) $next = $_GET['page']+1;
-
-	    if(@$options['prev'] != null && @$_GET['page'] > 0){
+	    if(@$options['prev'] != null && $prev > 0){
 	      $button .= "<div ";
 	      $button .= isset($options['button']['class']) && $options['button']['class'] != null ? " class='".$options['button']['class']."'" : null;
 	      $button .= isset($options['button']['id']) && $options['button']['id'] != null ? " id='".$options['button']['class']."'" : null;
@@ -221,7 +225,7 @@ class Table
 
 	    $i=1;
 	    while($i<=$slice){
-	      if(@$_GET['page']){
+	      if(@$page){
 	        @$button_reverse = $_GET['page']==$i ? $options['button']['reverse'] : null;
 	        @$lnk_reverse = $_GET['page']==$i ? $options['link']['reverse'] : null;
 	      }else{
@@ -240,7 +244,7 @@ class Table
 	      $i++;
 	    }
 
-	    if(@$options['next'] != null && $slice != @$_GET['page']){
+	    if(@$options['next'] != null && $slice != $page){
 	      $button .= "<div ";
 	      $button .= isset($options['button']['class']) && $options['button']['class'] != null ? " class='".$options['button']['class']."'" : null;
 	      $button .= isset($options['button']['id']) && $options['button']['id'] != null ? " id='".$options['button']['class']."'" : null;

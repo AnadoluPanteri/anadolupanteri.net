@@ -2,7 +2,7 @@
 class Table
 {
   public $model;
-  public $out;
+  public $out=null;
   /*
     Example;
     $options=array(
@@ -86,7 +86,7 @@ class Table
 
 
     if($this->model->db->output){
-		$this->out = "<table";
+		$this->out .= "<table";
 	    $this->out .= $class != null ? " class='".$class."'" : null;
 	    $this->out .= $id != null ? " id='".$id."'" : null;
 	    $this->out .= ">";
@@ -131,8 +131,8 @@ class Table
             if($links != null && is_array($links)){
               foreach($links as $rw => $opts){
                   if($rw == $row){
-                    $submodel = new $opts['model'];
-                    $submodel->get(array($opts['extract'] => $arr[$i][$row]));
+	               	$submodel = new $opts['model'];
+                    $submodel->get(array($opts['extract'] => $arr[$i][$opts['value']]));
 
                     if(@is_numeric($submodel->id)){
 	                    $newurl = str_replace("%model%",$opts['model'],$opts['url']);
@@ -140,8 +140,8 @@ class Table
 	                    $newurl = str_replace("%extract%",$submodel->$opts['extract'],$newurl);
 	                    $this->out.="<td><a href=".$newurl.">".$submodel->$opts['output']."</a></td>";
                     }else{
-	                    $this->out.="<td>".$arr[$i][$row]."</td>";
-                    }
+	                	$this->out.="<td>".$arr[$i][$row]."</td>";
+                   	}
 
                     $list[] = $row;
                   }
@@ -254,6 +254,11 @@ class Table
 	    $this->out .= str_replace("%buttons%",$button,$options['html']);
 	    return str_replace("%buttons%",$button,$options['html']);
 	}
+  }
+  
+  
+  public function html($html){
+    $this->out.=$html;
   }
 
 

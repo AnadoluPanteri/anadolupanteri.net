@@ -171,7 +171,7 @@ class Security
 
   /* XSS için htmlsan fonksiyonu */
   public function htmlsan($htmlsanitize){
-    return $htmlsanitize = htmlspecialchars($htmlsanitize, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($htmlsanitize, ENT_QUOTES, 'UTF-8');
   }
 
   /* filtreleme ile ilgili fonksiyonlar */

@@ -31,6 +31,7 @@ class Form
       @$data = $options['data'] != null ? $options['data'] : null;
       @$value = $options['value'] != null ? $options['value'] : null;
       @$selected = $options['selected'] != null ? $options['selected'] : null;
+      @$append = $options['append'] != null ? $options['append'] : null;
 
       switch($options['type']){
         case 'input':
@@ -42,7 +43,8 @@ class Form
             'type' => $type,
             'label' => $label,
             'value' => $value,
-            'html' => $html
+            'html' => $html,
+            'append' => $append
           ));
           break;
         case 'option':
@@ -53,7 +55,8 @@ class Form
             'data' => $data,
             'html' => $html,
             'label' => $label,
-            'selected' => $selected
+            'selected' => $selected,
+            'append' => $append
           ));
           break;
 
@@ -65,7 +68,8 @@ class Form
             'value' => $value,
             'type' => $type,
             'onclick' => $onclick,
-            'html' => $html
+            'html' => $html,
+            'append' => $append
           ));
           break;
 
@@ -76,7 +80,8 @@ class Form
             'name' => $field,
             'label' => $label,
             'value' => $value,
-            'html' => $html
+            'html' => $html,
+            'append' => $append
           ));
           break;
       }
@@ -92,7 +97,8 @@ class Form
     'placeholder' => null,
     'label' => null,
     'value' => null,
-    'html' => null
+    'html' => null,
+    'append' => null
   )){
     @$out = $options['label'] != null ? "<label>".$options['label']."</label>" : null;
     @$out .= "<input";
@@ -103,6 +109,7 @@ class Form
     @$out .= $options['value'] != null ? ' value="'.$options['value'].'"' : null;
     @$out .= $options['placeholder'] != null ? ' placeholder="'.$options['placeholder'].'"' : null;
     $out .= " />";
+    @$out .= $options['append'] != null ? $options['append'] : null;
     if($options['html']) $out = str_replace('%form%',$out,$options['html']);
     return $out;
   }
@@ -113,7 +120,8 @@ class Form
     'name' => null,
     'selected' => null,
     'label' => null,
-    'html' => null
+    'html' => null,
+    'append' => null
   )){
     @$out = $options['label'] != null ? "<label>".$options['label']."</label>" : null;
     @$out .= "<select";
@@ -121,14 +129,16 @@ class Form
     @$out .= $options['id'] != null ? ' id="'.$options['id'].'"' : null;
     @$out .= $options['name'] != null ? ' name="'.$options['name'].'"' : null;
     $out .= " >";
-
-    foreach($array as $key => $val){
-      if(@$options['selected'] == $val){
-        $selected = 'selected';
-      }else $selected = null;
-
-      $out .= "<option value='".$val."' ".$selected.">".$key."</option>";
-    }
+    @$out .= $options['append'] != null ? $options['append'] : null;
+	if(is_array($array)){
+		foreach($array as $key => $val){
+	      if(@$options['selected'] == $val){
+	        $selected = 'selected';
+	      }else $selected = null;
+	
+	      $out .= "<option value='".$val."' ".$selected.">".$key."</option>";
+	    }
+	}
 
     $out .= "</select>";
     if($options['html']) $out = str_replace('%form%',$out,$options['html']);
@@ -141,7 +151,8 @@ class Form
     "onclick" => null,
     'value' => null,
     'type' => null,
-    'html' => null
+    'html' => null,
+    'append' => null
   )){
     $out = "<button";
     @$out .= $options['class'] != null ? ' class="'.$options['class'].'"' : null;
@@ -152,6 +163,7 @@ class Form
     $out .= ">";
     @$out .= $options['value'] != null ? $options['value'] : null;
     $out .= "</button>";
+    @$out .= $options['append'] != null ? $options['append'] : null;
     if($options['html']) $out = str_replace('%form%',$out,$options['html']);
     return $out;
   }
@@ -162,7 +174,8 @@ class Form
     "name" => null,
     'value' => null,
     'label' => null,
-    'html' => null
+    'html' => null,
+    'append' => null
   )){
     $out = null;
     @$out .= $options['label'] != null ? "<label>".$options['label']."</label>" : null;
@@ -173,8 +186,14 @@ class Form
     $out .= ">";
     @$out .= $options['value'] != null ? $options['value'] : null;
     $out .= "</textarea>";
+    @$out .= $options['append'] != null ? $options['append'] : null;
     if($options['html']) $out = str_replace('%form%',$out,$options['html']);
     return $out;
+  }
+  
+  
+  function html($html){
+	  $this->out .= $html;
   }
 
   function end(){

@@ -1,234 +1,274 @@
 <?php
+/**
+ * API class.
+ */
 class API
 {
 
-    public $users;
+	/**
+	 * users
+	 *
+	 * @var mixed
+	 * @access public
+	 */
+	public $users;
 
-    public function __construct(){
-        $uri = parse_url($_SERVER['REQUEST_URI']);
-            $query = isset($uri['query']) ? $uri['query'] : '';
-            $uri = isset($uri['path']) ? rawurldecode($uri['path']) : '';
-
-
-            if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0)
-            {
-                    $uri = (string) substr($uri, strlen($_SERVER['SCRIPT_NAME']));
-            }
-            elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0)
-            {
-                    $uri = (string) substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
-            }
-
-            $this->_url = explode('/',$uri);
-
-            if(isset($this->_url[0])
-            && $this->_url[0] == "index"
-            || $this->_url[0] == "index.php"
-            || $this->_url[0] == ""){
-                    unset($this->_url[0]);
-            }
-
-            $this->model = $this->_url[2];
-            $this->id = $this->_url[3];
-            $this->options = explode("|",$_GET['options']);
-            unset($_GET['options']);
-            foreach ($_GET as $key => $val){
-                $this->where[$key]=$val;
-            }
-    }
-
-    public function basicAuth(){
-        $username = null;
-        $password = null;
-
-        // mod_php
-        if (isset($_SERVER['PHP_AUTH_USER'])) {
-            $username = $_SERVER['PHP_AUTH_USER'];
-            $password = $_SERVER['PHP_AUTH_PW'];
+	/**
+	 * __construct function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function __construct(){
+		$uri = parse_url($_SERVER['REQUEST_URI']);
+		$query = isset($uri['query']) ? $uri['query'] : '';
+		$uri = isset($uri['path']) ? rawurldecode($uri['path']) : '';
 
 
+		if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0)
+		{
+			$uri = (string) substr($uri, strlen($_SERVER['SCRIPT_NAME']));
+		}
+		elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0)
+		{
+			$uri = (string) substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
+		}
 
-        // most other servers
-        } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+		$this->_url = explode('/',$uri);
 
-                if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
-                  list($username,$password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+		if(isset($this->_url[0])
+			&& $this->_url[0] == "index"
+			|| $this->_url[0] == "index.php"
+			|| $this->_url[0] == ""){
+			unset($this->_url[0]);
+		}
 
-        }
+		$this->model = $this->_url[2];
+		$this->id = $this->_url[3];
+		$this->options = explode("|",$_GET['options']);
+		unset($_GET['options']);
+		foreach ($_GET as $key => $val){
+			$this->where[$key]=$val;
+		}
+	}
 
-        if (is_null($username)) {
-            header('WWW-Authenticate: Basic realm="API login"');
-            header('HTTP/1.0 401 Unauthorized');
-            die();
-        }else{
-            /* domain doğrulaması */
-            if(isset($this->users[$username])){
-                if($this->users[$username]!=$password){
-                    header('HTTP/1.0 401 Unauthorized');
-                    die();
-                }
-            }else{
-                header('HTTP/1.0 401 Unauthorized');
-                die();
-            }
-        }
+	/**
+	 * basicAuth function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function basicAuth(){
+		$username = null;
+		$password = null;
 
-    }
-
-    public function addUser($config){
-        foreach ($config as $username => $password){
-            $this->users[$username] = $password;
-        }
-    }
+		// mod_php
+		if (isset($_SERVER['PHP_AUTH_USER'])) {
+			$username = $_SERVER['PHP_AUTH_USER'];
+			$password = $_SERVER['PHP_AUTH_PW'];
 
 
 
-    public function method(){
-            $method = $_SERVER['REQUEST_METHOD'];
-            switch($method) {
-              case 'PUT':
-                  return $this->put();
-                  break;
-              case 'POST':
-                  return $this->post();
-                  break;
-              case 'DELETE':
-                  return $this->delete();
-                  break;
+			// most other servers
+		} elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
-              case 'GET':
-                  return $this->get();
-                  break;
+			if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']),'basic')===0)
+				list($username,$password) = explode(':',base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
 
-              default:
-                  header('HTTP/1.1 405 Method Not Allowed');
-                  header('Allow: GET, PUT, DELETE, POST');
-                  break;
-              }
-    }
+		}
 
-    public function delete(){
-        $model = $this->model;
-        $delete = new $model();
-        if($delete->delete($this->id)) $result['status'] = true;
-        else $result['status'] = false;
-        return json_encode($result);
-    }
-    public function put(){
-        $model = $this->model;
-        parse_str(file_get_contents("php://input"),$post_vars);
-        $put = new $model($post_vars);
+		if (is_null($username)) {
+			header('WWW-Authenticate: Basic realm="API login"');
+			header('HTTP/1.0 401 Unauthorized');
+			die();
+		}else{
+			/* domain doğrulaması */
+			if(isset($this->users[$username])){
+				if($this->users[$username]!=$password){
+					header('HTTP/1.0 401 Unauthorized');
+					die();
+				}
+			}else{
+				header('HTTP/1.0 401 Unauthorized');
+				die();
+			}
+		}
 
-        $result['status'] = false;
-        if(isset($this->id)){
-            if($put->update($this->id)){
-                $result['status'] = true;
-            }
-        }
-        return json_encode($result);
-    }
+	}
 
-    /*
-     * GET DATA API USE
-     *
-     *  <script name>/<custom route>/<model>/<id|options>&<where array>&<where array>...
-     *  @mode: your model
-     *  @id: numeric
-     *  @options: ?options=order:<row>,<true|false>|limit:<start>,<end>|group:<row>,<true|false>
-     *  @where array: &<row>=<value>
-     *
-     *  example: get users, order by name, show only 10 data
-     *  /index.php/json/users/?options=order:name,true|limit:0,10
-     *
-     *  example: get 1. user
-     *  /index.php/json/users/1
-     *
-     *  example: show 'odiac' users
-     *  /index.php/json/users/?name=odiac
-     */
-    public function get(){
-        $model = $this->model;
-        $get = new $model();
-        if(is_numeric($this->id)){
-            $get->find($this->id);
-            if($get->_def){
-                $result['status'] = true;
-                foreach ($get->_def as $key => $val){
-                    if(!is_numeric($key)){
-                        $data[$key] = $val;
-                    }
-                }
-                $result['data'] = $data;
-
-            }else{
-                $result['status'] = false;
-            }
-        }else{
-            $limit = null;
-            $where = null;
-            $group = null;
-            $order = null;
-
-            if(is_array($this->options)){
-                foreach ($this->options as $option) {
-                    $opt = explode(":",$option);
-                    $val = explode(",",$opt[1]);
-                    if($opt[0] == "order"){
-                        $order = array($val[0],$val[1]);
-                    }
-
-                    if($opt[0] == "limit"){
-                        $limit = array($val[0],$val[1]);
-                    }
-
-                    if($opt[0] == "group"){
-                        $group = array($val[0],$val[1]);
-                    }
-                }
-            }
-
-            if(isset($this->where)){
-                $where = $this->where;
-            }
+	/**
+	 * addUser function.
+	 *
+	 * @access public
+	 * @param mixed $config
+	 * @return void
+	 */
+	public function addUser($config){
+		foreach ($config as $username => $password){
+			$this->users[$username] = $password;
+		}
+	}
 
 
 
-            $out = $get->special($where,$order,$limit,$group);
+	/**
+	 * method function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function method(){
+		$method = $_SERVER['REQUEST_METHOD'];
+		switch($method) {
+		case 'PUT':
+			return $this->put();
+			break;
+		case 'POST':
+			return $this->post();
+			break;
+		case 'DELETE':
+			return $this->delete();
+			break;
 
-            if(is_array($out)){
-                $result['status'] = true;
-                $i=0;
-                while($i<count($out)){
-                    foreach ($out[$i] as $key => $val){
-                        if (!is_numeric($key)) {
-                            $result['data'][$i][$key] = $val;
-                        }
-                    }
-                    $i++;
-                }
-            }else{
-                $result['status'] = false;
-            }
-        }
+		case 'GET':
+			return $this->get();
+			break;
 
-        return json_encode($result);
-    }
+		default:
+			header('HTTP/1.1 405 Method Not Allowed');
+			header('Allow: GET, PUT, DELETE, POST');
+			break;
+		}
+	}
 
-    public function post(){
-        $model = $this->model;
-        $post = new $model($_POST);
+	/**
+	 * delete function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function delete(){
+		$model = $this->model;
+		$delete = new $model();
+		if($delete->delete($this->id)) $result['status'] = true;
+		else $result['status'] = false;
+		return json_encode($result);
+	}
+	/**
+	 * put function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function put(){
+		$model = $this->model;
+		parse_str(file_get_contents("php://input"),$post_vars);
+		$put = new $model($post_vars);
 
-        $result['status'] = false;
-        if(isset($this->id)){
-            if($post->update($this->id)){
-                $result['status'] = true;
-            }
-        }else{
-            if($post->save()){
-                $result['status'] = true;
-            }
-        }
-        return json_encode($result);
-    }
+		$result['status'] = false;
+		if(isset($this->id)){
+			if($put->update($this->id)){
+				$result['status'] = true;
+			}
+		}
+		return json_encode($result);
+	}
+
+	/**
+	 * get function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function get(){
+		$model = $this->model;
+		$get = new $model();
+		if(is_numeric($this->id)){
+			$get->find($this->id);
+			if($get->_def){
+				$result['status'] = true;
+				foreach ($get->_def as $key => $val){
+					if(!is_numeric($key)){
+						$data[$key] = $val;
+					}
+				}
+				$result['data'] = $data;
+
+			}else{
+				$result['status'] = false;
+			}
+		}else{
+			$limit = null;
+			$where = null;
+			$group = null;
+			$order = null;
+
+			if(is_array($this->options)){
+				foreach ($this->options as $option) {
+					$opt = explode(":",$option);
+					$val = explode(",",$opt[1]);
+					if($opt[0] == "order"){
+						$order = array($val[0],$val[1]);
+					}
+
+					if($opt[0] == "limit"){
+						$limit = array($val[0],$val[1]);
+					}
+
+					if($opt[0] == "group"){
+						$group = array($val[0],$val[1]);
+					}
+				}
+			}
+
+			if(isset($this->where)){
+				$where = $this->where;
+			}
+
+
+
+			$out = $get->special($where,$order,$limit,$group);
+
+			if(is_array($out)){
+				$result['status'] = true;
+				$i=0;
+				while($i<count($out)){
+					foreach ($out[$i] as $key => $val){
+						if (!is_numeric($key)) {
+							$result['data'][$i][$key] = $val;
+						}
+					}
+					$i++;
+				}
+			}else{
+				$result['status'] = false;
+			}
+		}
+
+		return json_encode($result);
+	}
+
+	/**
+	 * post function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function post(){
+		$model = $this->model;
+		$post = new $model($_POST);
+
+		$result['status'] = false;
+		if(isset($this->id)){
+			if($post->update($this->id)){
+				$result['status'] = true;
+			}
+		}else{
+			if($post->save()){
+				$result['status'] = true;
+			}
+		}
+		return json_encode($result);
+	}
 }
 ?>

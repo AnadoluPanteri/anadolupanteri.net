@@ -1,6 +1,19 @@
 <?php
+/**
+ * Text class.
+ */
 class Text
 {
+	/**
+	 * convert function.
+	 * 
+	 * @access public
+	 * @param mixed $text
+	 * @param mixed $lang_input
+	 * @param mixed $lang_output
+	 * @param bool $strstat (default: false)
+	 * @return void
+	 */
 	public function convert($text,$lang_input,$lang_output, $strstat=false) {
 		switch($lang_input){
 			case 'tr':

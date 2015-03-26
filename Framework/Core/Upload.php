@@ -1,11 +1,29 @@
 <?php
+/**
+ * Upload class.
+ */
 class Upload
 {
 	public $file;
+
+	/**
+	 * config function.
+	 *
+	 * @access public
+	 * @param array $file (default: array())
+	 * @return void
+	 */
 	public function config($file=array()){
 		$this->file = $file;
 	}
 
+	/**
+	 * upload function.
+	 *
+	 * @access public
+	 * @param array $fileInput (default: array())
+	 * @return void
+	 */
 	public function upload($fileInput=array()){
 		if(is_array($this->file['allowedTypes'])) $allowedTypes = $this->file['allowedTypes'];
 		if(is_numeric($this->file['maxSize'])) $allowedMaxSize = $this->file['maxSize'];
@@ -16,7 +34,7 @@ class Upload
 		}
 
 		if($fileInput == array()) return false;
-		
+
 		if(is_array($fileInput["name"])){
 			foreach($fileInput as $k => $v){
 				foreach($v as $d => $e){
@@ -25,8 +43,8 @@ class Upload
 			}
 			$fileInput = $f;
 		}
-		
-		
+
+
 		if($this->check($fileInput,$allowedMaxSize,$allowedTypes)){
 			if(file_exists($uploadFolder.$fileInput["name"])){
 				return false;
@@ -52,7 +70,7 @@ class Upload
 					'folder' => $uploadFolder,
 					'extention' => $fileExt,
 					'path' => $normalPath
-					);
+				);
 			}
 		}
 
@@ -60,10 +78,19 @@ class Upload
 
 	}
 
+	/**
+	 * check function.
+	 *
+	 * @access public
+	 * @param mixed $fileInput
+	 * @param mixed $fileSize
+	 * @param array $fileType (default: array())
+	 * @return void
+	 */
 	public function check($fileInput,$fileSize,$fileType=array()){
 		$extention = false;
 		$size = false;
-		
+
 
 		$fileSize = $fileSize * (1024 * 1024);
 		$fileExt = explode(".", $fileInput['name']);
@@ -88,12 +115,19 @@ class Upload
 
 	}
 
+	/**
+	 * fixName function.
+	 *
+	 * @access public
+	 * @param mixed $text
+	 * @return void
+	 */
 	public function fixName($text) {
-			$text = trim($text);
-			$search = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ',')','(','#');
-			$replace = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_','_','_');
-			$new_text = str_replace($search,$replace,$text);
-			return $new_text;
+		$text = trim($text);
+		$search = array('Ç','ç','Ğ','ğ','ı','İ','Ö','ö','Ş','ş','Ü','ü',' ',')','(','#');
+		$replace = array('c','c','g','g','i','i','o','o','s','s','u','u','_','_','_','_');
+		$new_text = str_replace($search,$replace,$text);
+		return $new_text;
 	}
 }
 ?>

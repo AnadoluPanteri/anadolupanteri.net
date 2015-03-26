@@ -1,44 +1,78 @@
 <?php
+/**
+ * Model class.
+ */
 class Model
 {
-	public function __construct(Array $properties=array()){
+	/**
+	 * __construct function.
+	 *
+	 * @access public
+	 * @param Array $properties (default: array())
+	 * @return void
+	 */
+	public function __construct(array $properties=array()){
 		$this->db = new DB();
 		$this->db->table($this->table());
 
 		foreach($properties as $key => $value){
-	      $this->{$key} = $value;
-				$this->_def[$key]=$value;
-	    }
+			$this->{$key} = $value;
+			$this->_def[$key]=$value;
+		}
 	}
 
-	/* destroy database */
-	/* DANGER!
+
+	/**
+	 * destroy function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function destroy(){
 		$this->db->drop();
 	}
-	*/
-	
-	public function setVars(Array $properties=array()){
+
+	/**
+	 * setVars function.
+	 *
+	 * @access public
+	 * @param Array $properties (default: array())
+	 * @return void
+	 */
+	public function setVars(array $properties=array()){
 		foreach($properties as $key => $value){
-	      $this->{$key} = $value;
-				$this->_def[$key]=$value;
-	    }
+			$this->{$key} = $value;
+			$this->_def[$key]=$value;
+		}
 	}
 
 
-	/* delete from id */
+
+	/**
+	 * delete function.
+	 *
+	 * @access public
+	 * @param int $id (default: 0)
+	 * @return void
+	 */
 	public function delete($id=0){
 		$this->db->delete();
 		if(is_array($id)){
 			$this->db->where($id);
 			$this->db->run();
 		}else if(is_numeric($id)){
-			$this->db->where(array('id' => $id));
-			$this->db->run();
-		}
+				$this->db->where(array('id' => $id));
+				$this->db->run();
+			}
 	}
 
-	/* save/insert from this keys */
+
+	/**
+	 * save function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function save(){
 		$this->db->insert($this->_def);
 		if($this->db->run()){
@@ -48,7 +82,14 @@ class Model
 		return false;
 	}
 
-	/* find from id or this->keys */
+
+	/**
+	 * find function.
+	 *
+	 * @access public
+	 * @param mixed $id
+	 * @return void
+	 */
 	public function find($id){
 		$this->db->select();
 		$this->db->where(array('id' => $id));
@@ -65,7 +106,15 @@ class Model
 		return false;
 	}
 
-	/* get from array to set keys */
+
+	/**
+	 * get function.
+	 *
+	 * @access public
+	 * @param mixed $array
+	 * @param mixed $order (default: null)
+	 * @return void
+	 */
 	public function get($array,$order=null){
 		$pk = $this->getPrimaryKey();
 		$this->db->select();
@@ -81,8 +130,8 @@ class Model
 				if($desc){
 					$opt = false;
 				}else if($asc){
-					$opt = true;
-				}else{
+						$opt = true;
+					}else{
 					$opt = false;
 				}
 
@@ -93,7 +142,6 @@ class Model
 		}
 		$this->db->query();
 
-		//print_r($this->db->output->fetch());
 		$out = $this->db->output->fetch();
 		if(is_array($out)){
 			foreach ($out as $key => $val) {
@@ -107,6 +155,14 @@ class Model
 		return false;
 	}
 
+
+	/**
+	 * all function.
+	 *
+	 * @access public
+	 * @param mixed $array (default: null)
+	 * @return void
+	 */
 	public function all($array=null){
 		$this->db->select();
 		if($array != null && is_array($array)){
@@ -117,18 +173,22 @@ class Model
 		return $result;
 	}
 
-	/*
-		$select=array(),$where=array(),$orderBy=array(),$limit=array(),$groupBy=array(),$extra=null
-	*/
+	/**
+	 * all function.
+	 *
+	 * @access public
+	 * @param mixed $array (default: array)
+	 * @return void
+	 */
 	public function special($options=array(
-		"select" => array(),
-		"where" => array(),
-		"whereOpts" => array("exclude" => array(), "or" => null),
-		"groupBy" => array(),
-		"orderBy" => array(),
-		"limit" => array(),
-		"extra" => null
-	)){
+			"select" => array(),
+			"where" => array(),
+			"whereOpts" => array("exclude" => array(), "or" => null),
+			"groupBy" => array(),
+			"orderBy" => array(),
+			"limit" => array(),
+			"extra" => null
+		)){
 
 		if(is_array($options)){
 			if(isset($options['select']) && is_array($options['select']))
@@ -142,8 +202,8 @@ class Model
 					$exclude = is_array($options['whereOpts']['exclude']) ?  $options['whereOpts']['exclude'] : null;
 					$this->db->where($options['where'],$exclude,$or);
 				}else{
-					$this->db->where($options['where']);
-				}
+				$this->db->where($options['where']);
+			}
 
 
 
@@ -164,10 +224,10 @@ class Model
 
 			$run = true;
 		}else if(isset($options)){
-			$this->db->custom($options);
+				$this->db->custom($options);
 
-			$run = true;
-		}else{
+				$run = true;
+			}else{
 			$run = false;
 		}
 
@@ -181,6 +241,13 @@ class Model
 		return false;
 	}
 
+	/**
+	 * count function.
+	 *
+	 * @access public
+	 * @param mixed $arr (default: null)
+	 * @return void
+	 */
 	public function count($arr=null){
 		$this->db->count();
 		if(is_array($arr)) $this->db->where($arr);
@@ -191,7 +258,14 @@ class Model
 	}
 
 
-	/* update array2 from array1 */
+
+	/**
+	 * update function.
+	 *
+	 * @access public
+	 * @param int $id (default: 0)
+	 * @return void
+	 */
 	public function update($id=0){
 		if($this->_def){
 			$this->db->update($this->_def);
@@ -199,11 +273,17 @@ class Model
 			if(is_numeric($id)) $this->db->where(array("id"=>$id));
 			else if(is_array($id)) $this->db->where($id);
 
-			return $this->db->run();
+				return $this->db->run();
 		}
 	}
 
 
+	/**
+	 * getPrimaryKey function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function getPrimaryKey(){
 		$this->db->keys();
 		$this->db->where(array('Key_name' => 'PRIMARY'));
@@ -213,6 +293,14 @@ class Model
 		return $result;
 	}
 
+	/**
+	 * searchQuery function.
+	 *
+	 * @access public
+	 * @param mixed $query
+	 * @param mixed $config
+	 * @return void
+	 */
 	public function searchQuery($query,$config){
 		foreach ($this->search() as $key) {
 			$sq[$key] = $query;
@@ -228,6 +316,13 @@ class Model
 	}
 	*/
 
+
+	/**
+	 * getLastData function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function getLastData(){
 		$this->db->_query="SELECT * FROM ".$this->db->_table." ORDER BY ". $this->getPrimaryKey()." DESC LIMIT 1,1";
 		$this->db->query();

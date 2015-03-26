@@ -1,4 +1,7 @@
 <?php
+/**
+ * MailTemplate class.
+ */
 class MailTemplate
 {
 	public $_vars = array();
@@ -7,6 +10,13 @@ class MailTemplate
 	public $mail;
 	public $content;
 
+	/**
+	 * __construct function.
+	 *
+	 * @access public
+	 * @param mixed $template
+	 * @return void
+	 */
 	public function __construct($template){
 		$this->mail = new Mailer();
 		$this->mail->IsSMTP();
@@ -24,16 +34,24 @@ class MailTemplate
 		$this->template = $template;
 	}
 
+	/**
+	 * set function.
+	 *
+	 * @access public
+	 * @param mixed $s
+	 * @param mixed $v
+	 * @return void
+	 */
 	public function set($s,$v){
 		$this->_vars[$s] = $v;
 	}
 
-	/*
-	public function partial($v,$f){
-		$this->_partials[$v] = $f;
-	}
-	*/
-
+	/**
+	 * _getTemplate function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function _getTemplate(){
 		$content = file_get_contents($this->template);
 		foreach($this->_vars as $k => $v){
@@ -43,6 +61,14 @@ class MailTemplate
 	}
 
 
+	/**
+	 * addAddress function.
+	 *
+	 * @access public
+	 * @param mixed $name
+	 * @param mixed $email
+	 * @return void
+	 */
 	public function addAddress($name,$email){
 		$this->address[] = array(
 			'name' => $name,
@@ -50,6 +76,13 @@ class MailTemplate
 		);
 	}
 
+	/**
+	 * send function.
+	 *
+	 * @access public
+	 * @param mixed $subject
+	 * @return void
+	 */
 	public function send($subject){
 		$this->mail->Subject = !is_null($subject) ? $subject : null;
 		$this->mail->Body = $this->_getTemplate();

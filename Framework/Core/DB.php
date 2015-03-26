@@ -1,14 +1,67 @@
 <?php
+/**
+ * DB class.
+ */
 class DB
 {
+	/**
+	 * pdo
+	 *
+	 * @var mixed
+	 * @access private
+	 */
 	private $pdo;
+	/**
+	 * boot
+	 *
+	 * @var mixed
+	 * @access private
+	 */
 	private $boot;
+	/**
+	 * _query
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $_query;
+	/**
+	 * output
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $output;
+	/**
+	 * _table
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $_table;
+	/**
+	 * count
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $count;
+	/**
+	 * _config
+	 *
+	 * (default value: array())
+	 *
+	 * @var array
+	 * @access public
+	 */
 	public $_config = array();
 
+	/**
+	 * __construct function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function __construct(){
 		$this->boot = new Boot();
 
@@ -24,18 +77,35 @@ class DB
 		$this->_connect();
 	}
 
+	/**
+	 * _connect function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function _connect(){
 		try {
-				$this->pdo = new PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
+			$this->pdo = new PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
 		} catch (\PDOException $e) {
 			if(APP_DEBUGING){
-					$this->boot->err("Connection failed: ".$e->getMessage());
-				}
+				$this->boot->err("Connection failed: ".$e->getMessage());
+			}
 		}
 		//$this->pdo->exec("SET NAMES UTF8");
 		//$this->pdo->exec("SET CHARACTER SET UTF8");
 	}
 
+	/**
+	 * changeConnection function.
+	 *
+	 * @access public
+	 * @param mixed $server
+	 * @param mixed $username
+	 * @param mixed $password
+	 * @param mixed $database
+	 * @param mixed $driver (default: null)
+	 * @return void
+	 */
 	public function changeConnection($server,$username,$password,$database,$driver=null){
 		$this->_config['server'] = $server;
 		$this->_config['username'] = $username;
@@ -46,16 +116,35 @@ class DB
 		$this->_connect();
 	}
 
+	/**
+	 * changeDb function.
+	 *
+	 * @access public
+	 * @param mixed $db
+	 * @return void
+	 */
 	public function changeDb($db){
 		$this->_config['database'] = $db;
 		$this->_connect();
 	}
 
+	/**
+	 * getLastInsertedId function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function getLastInsertedId(){
 		$out = $this->pdo->lastInsertId();
 		return $out;
 	}
 
+	/**
+	 * query function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function query(){
 		if($out = $this->pdo->query($this->_query)){
 			$this->output = $out;
@@ -71,6 +160,12 @@ class DB
 		}
 	}
 
+	/**
+	 * run function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function run(){
 		if($this->pdo->exec($this->_query)){
 			return true;
@@ -84,10 +179,24 @@ class DB
 		}
 	}
 
+	/**
+	 * table function.
+	 *
+	 * @access public
+	 * @param mixed $name
+	 * @return void
+	 */
 	public function table($name){
 		$this->_table = $name;
 	}
 
+	/**
+	 * select function.
+	 *
+	 * @access public
+	 * @param mixed $array (default: null)
+	 * @return void
+	 */
 	public function select($array=null){
 		if(is_array($array)){
 			$selector=null;
@@ -105,14 +214,33 @@ class DB
 		$this->_query = "SELECT  $selector  FROM ".$this->_table;
 	}
 
+	/**
+	 * delete function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function delete(){
 		$this->_query = "DELETE FROM ".$this->_table;
 	}
 
+	/**
+	 * count function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function count(){
 		$this->_query = "SELECT count(*) as count FROM ".$this->_table;
 	}
 
+	/**
+	 * insert function.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @return void
+	 */
 	public function insert($data){
 		$this->_query = "INSERT INTO ".$this->_table;
 		$output=null;
@@ -139,6 +267,15 @@ class DB
 		}
 	}
 
+	/**
+	 * where function.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @param mixed $exclude (default: null)
+	 * @param bool $or (default: false)
+	 * @return void
+	 */
 	public function where($data,$exclude=null,$or=false){
 		$output=null;
 		if(is_array($data)){
@@ -164,6 +301,13 @@ class DB
 	}
 
 
+	/**
+	 * create function.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @return void
+	 */
 	public function create($data){
 		$q_create_table="CREATE TABLE IF NOT EXISTS `".$this->_table."`";
 		$q_create_table.="(";
@@ -182,39 +326,88 @@ class DB
 		$this->_query .= $q_create_table;
 	}
 
+	/**
+	 * drop function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function drop(){
 		$this->_query = "DROP TABLE ".$this->_table;
 	}
 
+	/**
+	 * colmns function.
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function colmns(){
-    	$this->_query = "SHOW COLUMNS FROM ".$this->_table;
-    }
+		$this->_query = "SHOW COLUMNS FROM ".$this->_table;
+	}
 
-    public function alter($data){
-    	$this->_query = "ALTER ".$this->table;
-    	foreach ($data as $key => $value) {
-    		$this->_query .= $value."(".$key.")";
-    	}
-    }
+	/**
+	 * alter function.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @return void
+	 */
+	public function alter($data){
+		$this->_query = "ALTER ".$this->table;
+		foreach ($data as $key => $value) {
+			$this->_query .= $value."(".$key.")";
+		}
+	}
 
-    public function orderBy($object=null,$asc=true){
-    	if($asc) $asc = "ASC";
-    	else $asc = "DESC";
-    	$this->_query .= " ORDER BY ".$object." ".$asc;
-    }
+	/**
+	 * orderBy function.
+	 *
+	 * @access public
+	 * @param mixed $object (default: null)
+	 * @param bool $asc (default: true)
+	 * @return void
+	 */
+	public function orderBy($object=null,$asc=true){
+		if($asc) $asc = "ASC";
+		else $asc = "DESC";
+		$this->_query .= " ORDER BY ".$object." ".$asc;
+	}
 
-    public function groupBy($object){
-	    if(isset($object)) $this->_query .= " GROUP BY ".$object;
-    }
+	/**
+	 * groupBy function.
+	 *
+	 * @access public
+	 * @param mixed $object
+	 * @return void
+	 */
+	public function groupBy($object){
+		if(isset($object)) $this->_query .= " GROUP BY ".$object;
+	}
 
-    public function limit($start=0,$end=200){
-    	$this->_query .= " LIMIT ".$start.",".$end;
-    }
+	/**
+	 * limit function.
+	 *
+	 * @access public
+	 * @param int $start (default: 0)
+	 * @param int $end (default: 200)
+	 * @return void
+	 */
+	public function limit($start=0,$end=200){
+		$this->_query .= " LIMIT ".$start.",".$end;
+	}
 
-    public function update($data){
-    	$this->_query = "UPDATE ".$this->_table." SET ";
+	/**
+	 * update function.
+	 *
+	 * @access public
+	 * @param mixed $data
+	 * @return void
+	 */
+	public function update($data){
+		$this->_query = "UPDATE ".$this->_table." SET ";
 
-    	$output=null;
+		$output=null;
 		$last_key=key(array_slice($data, -1,1, TRUE));
 		if(is_array($data)){
 			foreach($data as $key => $value){
@@ -227,153 +420,122 @@ class DB
 			}
 		}
 		$this->_query .= $output;
-    }
+	}
 
-    public function extra($extra){
-    	$this->_query .= $extra;
-    }
+	/**
+	 * extra function.
+	 *
+	 * @access public
+	 * @param mixed $extra
+	 * @return void
+	 */
+	public function extra($extra){
+		$this->_query .= $extra;
+	}
 
-    public function keys(){
-    	$this->_query = "SHOW KEYS FROM ".$this->_table;
-    }
+	/**
+	 * keys function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function keys(){
+		$this->_query = "SHOW KEYS FROM ".$this->_table;
+	}
 
-		public function columns(){
-			$this->_query = "SHOW COLUMNS FROM ".$this->_table;
+	/**
+	 * columns function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function columns(){
+		$this->_query = "SHOW COLUMNS FROM ".$this->_table;
+	}
+
+
+	/**
+	 * search function.
+	 *
+	 * @access public
+	 * @param mixed $data (default: null)
+	 * @param array $config (default: array())
+	 * @return void
+	 */
+	public function search($data=null,$config=array()){
+		$output = null;
+		$this->_query = "SELECT * FROM ".$this->_table;
+		if($data!=null){
+			$this->_query.=" WHERE ";
+		}else{
+			return;
 		}
 
-		/*
-    public function search($data,$filter=null,$extra=null){
-    	$this->_query = "SELECT * FROM ".$this->_table." WHERE ";
 
-    	$output=null;
-		$last_key=key(array_slice($data, -1,1, TRUE));
-		if(is_array($data)){
-			foreach($data as $key => $value){
-				$output.="$key LIKE '%$value%'";
-				if($key!=$last_key){
-					$output.=" OR ";
-				}
-			}
-		}
-
-		$last_key=key(array_slice($filter, -1,1, TRUE));
-		if(is_array($filter)){
-			$output.=" AND ";
-			foreach($filter as $key => $value){
-				$output.="$key='%$value%'";
-				if($key!=$last_key){
-					$output.=" AND ";
-				}
-			}
-		}
-
-		if(!is_null($extra)){
-			$output.=$extra;
-		}
-
-		$this->_query .= $output;
-    }
-		*/
-
-		public function search($data=null,$config=array(
-			"regexp" => false,
-			"filter" => null,
-			"extra" => null,
-			"or" => false
-		)){
-			$output = null;
-			$this->_query = "SELECT * FROM ".$this->_table;
-			if($data!=null){
-				$this->_query.=" WHERE ";
-			}else{
-				return;
-			}
-
-
-			if($config['filter']){
-				$last_key=key(array_slice($config['filter'], -1,1, TRUE));
-				if(is_array($config['filter'])){
-					foreach($config['filter'] as $key => $value){
-						$output.="$key='$value'";
-						$output.= " AND ";
-						/*
+		if($config['filter']){
+			$last_key=key(array_slice($config['filter'], -1,1, TRUE));
+			if(is_array($config['filter'])){
+				foreach($config['filter'] as $key => $value){
+					$output.="$key='$value'";
+					$output.= " AND ";
+					/*
 						if($key!=$last_key){
 							$output.= " AND ";
 						}
 						*/
+				}
+			}
+		}
+
+		if($config['regexp']){
+			$last_key=key(array_slice($data, -1,1, TRUE));
+			if(is_array($data)){
+				foreach($data as $key => $value){
+					$output.="$key REGEXP '$value'";
+					if($key!=$last_key){
+						$output.= $config['or'] ? " OR " : " AND ";
 					}
 				}
 			}
-
-			if($config['regexp']){
-				$last_key=key(array_slice($data, -1,1, TRUE));
-				if(is_array($data)){
-					foreach($data as $key => $value){
-						$output.="$key REGEXP '$value'";
-						if($key!=$last_key){
-							$output.= $config['or'] ? " OR " : " AND ";
-						}
-					}
-				}
-			}else{
-				$last_key=key(array_slice($data, -1,1, TRUE));
-				if(is_array($data)){
-					foreach($data as $key => $value){
-						$output.="$key LIKE '%$value%'";
-						if($key!=$last_key){
-							$output.=" OR ";
-						}
+		}else{
+			$last_key=key(array_slice($data, -1,1, TRUE));
+			if(is_array($data)){
+				foreach($data as $key => $value){
+					$output.="$key LIKE '%$value%'";
+					if($key!=$last_key){
+						$output.=" OR ";
 					}
 				}
 			}
-
-			if(!is_null($config['extra'])){
-				$output.=$config['extra'];
-			}
-
-			$this->_query .= $output;
-
 		}
 
-		public function custom($query){
-			$this->_query = $query;
-		}
-
-		/*
-    public function regexp($data,$filter=null,$extra=null){
-    	$this->_query = "SELECT * FROM ".$this->_table." WHERE ";
-
-    	$output=null;
-		$last_key=key(array_slice($data, -1,1, TRUE));
-		if(is_array($data)){
-			foreach($data as $key => $value){
-				$output.="$key REGEXP '$value'";
-				if($key!=$last_key){
-					$output.=" OR ";
-				}
-			}
-		}
-
-		$last_key=key(array_slice($filter, -1,1, TRUE));
-		if(is_array($filter)){
-			$output.=" AND ";
-			foreach($filter as $key => $value){
-				$output.="$key='%$value%'";
-				if($key!=$last_key){
-					$output.=" AND ";
-				}
-			}
-		}
-
-		if(!is_null($extra)){
-			$output.=$extra;
+		if(!is_null($config['extra'])){
+			$output.=$config['extra'];
 		}
 
 		$this->_query .= $output;
-    }
-    */
 
-    public function repair(){
+	}
+
+	/**
+	 * custom function.
+	 *
+	 * @access public
+	 * @param mixed $query
+	 * @return void
+	 */
+	public function custom($query){
+		$this->_query = $query;
+	}
+
+
+	/**
+	 * repair function.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function repair(){
 		header("Content-type: text/plain");
 
 
@@ -402,19 +564,40 @@ class DB
 
 		header("Content-type: text/html");
 		return $out2;
- 	}
-
-
- 	public function addPrimaryKey($key){
-	 	$this->_query = "ALTER TABLE ".$this->_table." ADD PRIMARY KEY (".$key.")  ";
- 	}
-
-	private function is_iterable($var)
-	{
-			return $var !== null && (is_array($var) || $var instanceof Iterator || $var instanceof IteratorAggregate);
 	}
 
 
+	/**
+	 * addPrimaryKey function.
+	 *
+	 * @access public
+	 * @param mixed $key
+	 * @return void
+	 */
+	public function addPrimaryKey($key){
+		$this->_query = "ALTER TABLE ".$this->_table." ADD PRIMARY KEY (".$key.")  ";
+	}
+
+	/**
+	 * is_iterable function.
+	 *
+	 * @access private
+	 * @param mixed $var
+	 * @return void
+	 */
+	private function is_iterable($var)
+	{
+		return $var !== null && (is_array($var) || $var instanceof Iterator || $var instanceof IteratorAggregate);
+	}
+
+
+	/**
+	 * searchColumn function.
+	 *
+	 * @access public
+	 * @param mixed $column (default: null)
+	 * @return void
+	 */
 	public function searchColumn($column=null){
 		if(!is_null($column)){
 
@@ -485,11 +668,26 @@ class DB
 
 	}
 
+	/**
+	 * getLastKey function.
+	 *
+	 * @access public
+	 * @static
+	 * @param mixed $data
+	 * @return void
+	 */
 	public static function getLastKey($data){
 		if(!is_array($data)) return false;
 		return key(array_slice($data, -1,1, TRUE));
 	}
 
+	/**
+	 * cQuery function.
+	 *
+	 * @access public
+	 * @param mixed $query
+	 * @return void
+	 */
 	public function cQuery($query){
 		$this->_query = $query;
 		$this->query();

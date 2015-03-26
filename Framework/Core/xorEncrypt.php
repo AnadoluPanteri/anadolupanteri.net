@@ -1,12 +1,29 @@
 <?php
+/**
+ * xorCrypt class.
+ */
 class xorCrypt
 {
 	private $password = NULL;
 
+	/**
+	 * set_key function.
+	 *
+	 * @access public
+	 * @param mixed $password
+	 * @return void
+	 */
 	public function set_key($password) {
 		$this->password = $password;
 	}
 
+	/**
+	 * get_rnd_iv function.
+	 *
+	 * @access private
+	 * @param mixed $iv_len
+	 * @return void
+	 */
 	private function get_rnd_iv($iv_len) {
 		$iv = '';
 		while ($iv_len-- > 0) {
@@ -15,6 +32,14 @@ class xorCrypt
 		return $iv;
 	}
 
+	/**
+	 * encrypt function.
+	 *
+	 * @access public
+	 * @param mixed $plain_text
+	 * @param int $iv_len (default: 16)
+	 * @return void
+	 */
 	public function encrypt($plain_text, $iv_len = 16) {
 		$plain_text .= "\x13";
 		$n = strlen($plain_text);
@@ -33,6 +58,14 @@ class xorCrypt
 		} else {}
 	}
 
+	/**
+	 * decrypt function.
+	 *
+	 * @access public
+	 * @param mixed $enc_text
+	 * @param int $iv_len (default: 16)
+	 * @return void
+	 */
 	public function decrypt($enc_text, $iv_len = 16) {
 		$enc_text = base64_decode($enc_text);
 		$n = strlen($enc_text);

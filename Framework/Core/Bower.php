@@ -1,9 +1,46 @@
 <?php
+/**
+ * Bower class.
+ */
 class Bower
 {
+	/**
+	 * componentsFolder
+	 *
+	 * (default value: 'Application/bower_components')
+	 *
+	 * @var string
+	 * @access public
+	 */
 	public $componentsFolder='Application/bower_components';
+	/**
+	 * folder
+	 *
+	 * (default value: null)
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $folder=null;
+	/**
+	 * html
+	 *
+	 * (default value: null)
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $html=null;
+
+	/**
+	 * __construct function.
+	 *
+	 * @access public
+	 * @param mixed $name
+	 * @param mixed $target (default: null)
+	 * @param mixed $componentsFolder (default: null)
+	 * @return void
+	 */
 	function __construct($name,$target=null,$componentsFolder=null){
 		if(!is_null($componentsFolder)){
 			$this->folder .= $componentsFolder;
@@ -21,6 +58,14 @@ class Bower
 	}
 
 
+	/**
+	 * generate function.
+	 *
+	 * @access public
+	 * @param array $files (default: array())
+	 * @param array $type (default: array())
+	 * @return void
+	 */
 	public function generate($files = array(),$type = array()){
 		if(is_array($type)){
 			foreach($type as $t){
@@ -51,13 +96,27 @@ class Bower
 	}
 
 
-  public function css($obje){
-    if(isset($obje) && $obje!=null){
-      return '<link rel="stylesheet" type="text/css" href="/'.$obje.'"/>';
-    }
-  }
+	/**
+	 * css function.
+	 *
+	 * @access public
+	 * @param mixed $obje
+	 * @return void
+	 */
+	public function css($obje){
+		if(isset($obje) && $obje!=null){
+			return '<link rel="stylesheet" type="text/css" href="/'.$obje.'"/>';
+		}
+	}
 
-  public function js($obje){
+	/**
+	 * js function.
+	 *
+	 * @access public
+	 * @param mixed $obje
+	 * @return void
+	 */
+	public function js($obje){
 		if(isset($obje) && $obje!=null){
 			return '<script type="text/javascript" src="/'.$obje.'"></script>';
 		}

@@ -137,8 +137,8 @@ class Boot
 		if($config != null) $this->config($config);
 		$this->_controllerPath = APPFOLDER."/controller/";
 		$this->_pageNotFound = APPFOLDER."/public/404.html";
-		header('X-Powered-By: BlueJacket');
-		ini_set("expose_php","off");
+		@header('X-Powered-By: BlueJacket');
+		@ini_set("expose_php","off");
 	}
 
 
@@ -185,7 +185,7 @@ class Boot
 			$controller_list = scandir(CONTROLLER_DIR);
 
 			foreach($controller_list as $cont){
-				if($cont != '..' && $cont != '.' && $cont != 'index.php'){
+				if($cont != '..' && $cont != '.' && $cont != 'index.php' && $cont != '.DS_Store'){
 					$contr = explode('.',$cont);
 					$contr = $contr[0];
 					$this->bind($contr,array(
@@ -553,7 +553,7 @@ class Boot
 		if(isset($folder)){
 			$fl = scandir($folder);
 			foreach($fl as $f){
-				if($f != '..' && $f != '.' && $f != 'index.php' && $f != "Boot.php"){
+				if($f != '..' && $f != '.' && $f != 'index.php' && $f != "Boot.php" && $cont != 'index.php'){
 					if(is_file($folder.$f)){
 						include $folder.$f;
 					}

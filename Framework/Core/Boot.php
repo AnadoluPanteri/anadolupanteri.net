@@ -125,6 +125,20 @@ class Boot
 	 * @access public
 	 */
 	public $session;
+	/**
+	 * _blockedFiles
+	 * 
+	 * @var mixed
+	 * @access private
+	 */
+	private $_blockedFiles=array(
+		".DS_Store",
+		".htaccess",
+		"index.php",
+		"..",
+		".",
+		"Boot.php"
+	);
 
 	/**
 	 * __construct function.
@@ -549,17 +563,34 @@ class Boot
 	 * @param mixed $folder
 	 * @return void
 	 */
-	public static function loader($folder){
+	public function loader($folder){
 		if(isset($folder)){
 			$fl = scandir($folder);
 			foreach($fl as $f){
-				if($f != '..' && $f != '.' && $f != 'index.php' && $f != "Boot.php" && $cont != 'index.php'){
+				if($this->_checkBlockedFiles($f)){
 					if(is_file($folder.$f)){
 						include $folder.$f;
 					}
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * _checkBlockedFiles function.
+	 * 
+	 * @access public
+	 * @param mixed $checkFile
+	 * @return void
+	 */
+	public function _checkBlockedFiles($checkFile){
+		foreach($this->_blockedFiles as $file){
+			if($file == $checkFile){
+				return false;
+			}
+		}
+		return true;
 	}
 }
 ?>

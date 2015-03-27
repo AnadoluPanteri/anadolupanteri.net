@@ -693,5 +693,49 @@ class DB
 		$this->query();
 		return $this->output;
 	}
+	
+	
+	/**
+	 * sum function.
+	 * 
+	 * @access public
+	 * @param array $arr (default: array())
+	 * @return void
+	 */
+	public function sum($arr=array()){
+		$output=null;
+		if(isset($arr['cols']) && is_array($arr['cols'])){
+			$output.='SELECT ';
+			$last_key=key(array_slice($arr['cols'], -1,1, TRUE));
+			foreach($arr['cols'] as $key){
+				$output.="SUM(`$key`) as `$key`";
+				if($key!=$last_key){
+					$output.=",";
+				}
+			}
+			$output.=" FROM ".$this->_table;
+			if(is_array($arr['where'])){
+				$output.=" WHERE ";
+				$last_key=key(array_slice($arr['where'], -1,1, TRUE));
+				foreach($arr['where'] as $key => $value){
+					$output.="`$key`='$value'";
+					if($key!=$last_key){
+						if($or) $output.=" OR ";
+						else $output.=" AND ";
+					}
+				}
+			}
+			if(is_array($arr['not'])){
+				$last_key2=key(array_slice($arr['not'], -1,1, TRUE));
+				foreach($arr['not'] as $key => $value){
+					$output.="`$key`!='$value'";
+					if($key!=$last_key2){
+						$output.=" AND ";
+					}
+				}
+			}
+			$this->_query = $output;
+		}
+	}
 }
 ?>

@@ -329,5 +329,12 @@ class Model
 		$result = @$this->db->output ? $this->db->output->fetch() : false;
 		return $result;
 	}
+	
+	public function sum($arr=array()){
+		$this->db->sum($arr);
+		$this->db->query();
+		$result = @$this->db->output ? $this->db->output->fetch() : false;
+		return $result;
+	}
 }
 ?>

@@ -12,6 +12,7 @@ class View
 	private $_partials;
 	private $_functions;
 	private $_call;
+	private $_bool;
 	public $themeFolder = TEMPLATE_FOLDER;
 
 
@@ -52,6 +53,19 @@ class View
 	 */
 	public function partial($v,$f){
 		$this->_partials[$v] = $f;
+	}
+	
+	
+	/**
+	 * boolSet function.
+	 * 
+	 * @access public
+	 * @param mixed $v
+	 * @param mixed $f
+	 * @return void
+	 */
+	public function boolSet($v,$f){
+		$this->_bool[$v] = $f;
 	}
 
 
@@ -165,8 +179,23 @@ class View
 				}
 			}
 		}
-
-
+		
+		/*
+			{if=%obj%}
+				
+			{/if}
+			
+		*/
+		
+		if($this->_bool){
+			foreach ($this->_bool as $key => $val) {
+				if($val){
+					$source = str_replace($this->_dropTag("{if=%$key%}","{/if}",$source), $this->_getTagContent("{if=%$key%}","{/if}",$source), $source);
+				}else{
+					$source = str_replace($this->_dropTag("{if=%$key%}","{/if}",$source), null, $source);
+				}
+			}
+		}
 
 		$source = str_replace($this->_dropTag("{* "," *}",$source), "<!-- ".$this->_getTagContent("{* "," *}",$source)." -->", $source);
 		$source = str_replace($this->_dropTag("{php}","{/php}",$source), eval($this->_getTagContent("{php}","{/php}",$source)), $source);

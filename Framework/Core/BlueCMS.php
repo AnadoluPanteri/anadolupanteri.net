@@ -1,6 +1,16 @@
 <?php 
+/**
+ * BlueCMS class.
+ */
 class BlueCMS 
 { 
+	/**
+	 * ascii function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
 	public static function ascii(){
 		$text = "<!--
  o.oOOOo.   o      O       o o.OOoOoo        .oOOOo.  Oo      oO .oOOOo.  
@@ -16,11 +26,41 @@ class BlueCMS
 	}
 	
 	
+	/**
+	 * head
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	public $head;
+	/**
+	 * body
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	public $body;
+	/**
+	 * topmenu
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	public $topmenu;
+	/**
+	 * leftmenu
+	 * 
+	 * @var mixed
+	 * @access public
+	 */
 	public $leftmenu;
 	
+	/**
+	 * __construct function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function __construct(){
 		$this->body=$this->generateBody();
 		$this->topmenu = $this->generateTopMenu();	
@@ -28,6 +68,12 @@ class BlueCMS
 		$this->leftmenu = $this->generateLeftMenu();	
 	}
 	
+	/**
+	 * siteInfo function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function siteInfo(){
 		$site = new Configuration();
 		$conf = $site->all();
@@ -40,6 +86,12 @@ class BlueCMS
 		return $new;
 	}
 	
+	/**
+	 * listModules function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function listModules(){
 		$modDir = MODULES_FOLDER;
 		
@@ -55,6 +107,12 @@ class BlueCMS
 		return $d;
 	}
 	
+	/**
+	 * listPlugins function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function listPlugins(){
 		$modDir = PLUGINS_FOLDER;
 		
@@ -70,6 +128,13 @@ class BlueCMS
 		return $d;
 	}
 	
+	/**
+	 * getModule function.
+	 * 
+	 * @access public
+	 * @param mixed $module
+	 * @return void
+	 */
 	public function getModule($module){
 		$f = MODULES_FOLDER."/".$module."/module.json";
 		if(is_file($f)){
@@ -83,6 +148,13 @@ class BlueCMS
 		}
 	}
 	
+	/**
+	 * getPlugin function.
+	 * 
+	 * @access public
+	 * @param mixed $plugin
+	 * @return void
+	 */
 	public function getPlugin($plugin){
 		$f = PLUGINS_FOLDER."/".$plugin."/plugin.json";
 		if(is_file($f)){
@@ -96,6 +168,12 @@ class BlueCMS
 		}
 	}
 	
+	/**
+	 * getUri function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function getUri(){
 		$uri = parse_url($_SERVER['REQUEST_URI']);
 	    $query = isset($uri['query']) ? $uri['query'] : '';
@@ -179,6 +257,12 @@ class BlueCMS
 	}
 	*/
 	
+	/**
+	 * generateBody function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function generateBody(){
 		$uri = $this->getUri();
 		
@@ -202,6 +286,12 @@ class BlueCMS
 	}
 	
 	
+	/**
+	 * generateTopMenu function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function generateTopMenu(){
 		$lm = $this->listModules();
 		
@@ -217,6 +307,12 @@ class BlueCMS
 	}
 	
 	
+	/**
+	 * generateLeftMenu function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function generateLeftMenu(){
 		$uri = $this->getUri();
 		
@@ -238,6 +334,12 @@ class BlueCMS
 		}
 	}
 	
+	/**
+	 * generatePluginMenu function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
 	public function generatePluginMenu(){
 		$lm = $this->listPlugins();
 		

@@ -85,8 +85,8 @@ class DB
 	 */
 	public function _connect(){
 		try {
-			$this->pdo = new PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
-		} catch (\PDOException $e) {
+			@$this->pdo = new PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
+		} catch (PDOException $e) {
 			if(APP_DEBUGING){
 				$this->boot->err("Connection failed: ".$e->getMessage());
 			}
@@ -146,15 +146,20 @@ class DB
 	 * @return void
 	 */
 	public function query(){
-		if($out = $this->pdo->query($this->_query)){
-			$this->output = $out;
-			if(APP_DEBUGING){
-				$this->boot->err('Query: '.$this->_query);
+		try{
+			if(isset($this->_query)){
+				@$out = $this->pdo->query($this->_query);
+				if($out){
+					$this->output = $out;
+				}else{
+					throw new customException("Output not array!");
+				}
+			}else{
+				throw new customException("Query is null!");
 			}
-		}else{
+		}catch(Exeption $e){
 			if(APP_DEBUGING){
-				$error = $this->pdo->errorInfo();
-				$this->boot->err('Query Failed: '.$error[2]);
+				$this->boot->err("Query Failed: ".$e->getMessage());
 				$this->boot->err('<br> Query: '.$this->_query);
 			}
 		}
@@ -167,16 +172,22 @@ class DB
 	 * @return void
 	 */
 	public function run(){
-		if($this->pdo->exec($this->_query)){
-			return true;
-		}else{
+		try{
+			if(isset($this->_query)){
+				if(!$this->pdo->exec($this->_query)){
+					throw new customException("Output not array!");
+				}
+			}else{
+				throw new customException("Query is null!");
+			}
+		}catch(Exeption $e){
 			if(APP_DEBUGING){
-				$error = $this->pdo->errorInfo();
-				$this->boot->err('Query Failed: '.$error[2]);
+				$this->boot->err("Query Failed: ".$e->getMessage());
 				$this->boot->err('<br> Query: '.$this->_query);
 			}
 			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -501,11 +512,7 @@ class DB
 			$last_key=key(array_slice($data, -1,1, TRUE));
 			if(is_array($data)){
 				foreach($data as $key => $value){
-					if(isset($config['like']) && $config['like']){
-						$output.="$key LIKE '%$value%'";
-					}else{
-						$output.="$key='$value'";
-					}
+					$output.="$key LIKE '%$value%'";
 					if($key!=$last_key){
 						$output.=" OR ";
 					}

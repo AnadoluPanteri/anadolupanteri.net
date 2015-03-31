@@ -225,9 +225,13 @@ class API
 				$where = $this->where;
 			}
 
-
-
-			$out = $get->special($where,$order,$limit,$group);
+			
+			$out = $get->special(array(
+				"where" => $where,
+				"order" => $order,
+				"limit" => $limit,
+				"groupBy" => $group
+			));
 
 			if(is_array($out)){
 				$result['status'] = true;

@@ -81,6 +81,46 @@ class View
 	public function call($v,$f,$c){
 		$this->_call[$c][$v] = $f;
 	}
+	
+	
+	/**
+	 * replaceContent function.
+	 * 
+	 * @access public
+	 * @param mixed $start
+	 * @param mixed $end
+	 * @param mixed $new
+	 * @param mixed $source
+	 * @return void
+	 */
+	function replaceContent($start, $end, $new, $source) {
+		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', $new, $source);
+	}
+	
+	
+	/**
+	 * dropContent function.
+	 * 
+	 * @access public
+	 * @param mixed $start
+	 * @param mixed $end
+	 * @param mixed $source
+	 * @return void
+	 */
+	function dropContent($start, $end, $source) {
+		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', '$2', $source);
+	}
+	
+	function extractUnit($string, $start, $end){
+		$pos = stripos($string, $start);
+		$str = substr($string, $pos);
+		$str_two = substr($str, strlen($start));
+		$second_pos = stripos($str_two, $end);
+		$str_three = substr($str_two, 0, $second_pos); 
+		$unit = trim($str_three); // remove whitespaces
+		return $unit;
+	}
+
 
 
 	/**
@@ -161,7 +201,10 @@ class View
 	public function _changeContents($source){
 		foreach ($this->_vars as $key2 => $value2) {
 			if(@!is_array($value) && @!is_array($key)){
-				@$source = str_replace('{$ ' . $key2 . ' }', $value2, $source);
+				@$source = $this->replaceContent('{$ '.$key2,' }', $value2, $source);
+				//@$source = str_replace('{$ ' . $key2 . ' }', $value2, $source);
+			}else{
+				@$source = $this->replaceContent('{$ '.$key2,' }', "", $source);
 			}
 		}
 		@$source = str_replace($this->_dropTag('{$ ',' }',$source), '', $source);
@@ -180,26 +223,26 @@ class View
 			}
 		}
 		
-		/*
-			{if=%obj%}
-				
-			{/if}
-			
-		*/
-		
 		if($this->_bool){
-			foreach ($this->_bool as $key => $val) {
-				if($val){
-					$source = str_replace($this->_dropTag("{if=%$key%}","{/if}",$source), $this->_getTagContent("{if=%$key%}","{/if}",$source), $source);
+			$check = array();
+			foreach ($this->_bool as $k => $v) {
+				if($v){
+					if(!in_array($content, $check)){
+						$content = $this->extractUnit($source,"{if $$k }","{/if}");
+						$source = $this->replaceContent("{if $$k }","{/if}",$content,$source);
+						$check[] = $content;
+					}
 				}else{
-					$source = str_replace($this->_dropTag("{if=%$key%}","{/if}",$source), null, $source);
+					$source = $this->replaceContent("{if $$k }","{/if}","",$source);
 				}
 			}
 		}
-
+		
+		/*
 		$source = str_replace($this->_dropTag("{* "," *}",$source), "<!-- ".$this->_getTagContent("{* "," *}",$source)." -->", $source);
 		$source = str_replace($this->_dropTag("{php}","{/php}",$source), eval($this->_getTagContent("{php}","{/php}",$source)), $source);
-
+		*/
+		
 		return $source;
 	}
 

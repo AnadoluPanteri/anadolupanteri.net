@@ -152,12 +152,12 @@ class DB
 				if($out){
 					$this->output = $out;
 				}else{
-					throw new customException("Output not array!");
+					throw new Exception("Output not array!");
 				}
 			}else{
-				throw new customException("Query is null!");
+				throw new Exception("Query is null!");
 			}
-		}catch(Exeption $e){
+		}catch(Exception $e){
 			if(APP_DEBUGING){
 				$this->boot->err("Query Failed: ".$e->getMessage());
 				$this->boot->err('<br> Query: '.$this->_query);
@@ -175,12 +175,12 @@ class DB
 		try{
 			if(isset($this->_query)){
 				if(!$this->pdo->exec($this->_query)){
-					throw new customException("Output not array!");
+					throw new Exception("Output not array!");
 				}
 			}else{
-				throw new customException("Query is null!");
+				throw new Exception("Query is null!");
 			}
-		}catch(Exeption $e){
+		}catch(Exception $e){
 			if(APP_DEBUGING){
 				$this->boot->err("Query Failed: ".$e->getMessage());
 				$this->boot->err('<br> Query: '.$this->_query);

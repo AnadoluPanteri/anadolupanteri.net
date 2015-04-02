@@ -40,7 +40,7 @@ class Controller
 	 * @return void
 	 */
 	public function __construct(){
-		$this->view = new View();
+		$this->view = new View(strtolower(self::getClassName()));
 		$uri = parse_url($_SERVER['REQUEST_URI']);
 		$query = isset($uri['query']) ? $uri['query'] : '';
 		$uri = isset($uri['path']) ? rawurldecode($uri['path']) : '';
@@ -72,5 +72,9 @@ class Controller
 		}
 
 	}
+	
+	public static function getClassName() {
+        return get_called_class();
+    }
 }
 ?>

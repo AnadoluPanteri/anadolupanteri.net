@@ -2,367 +2,551 @@
 /**
  * View class.
  */
-class View
-{
-	private $_time=0;
-	private $_templateFile;
-	private $_vars;
-	private $_debug;
-	private $_loadTime;
-	private $_partials;
-	private $_functions;
-	private $_call;
-	private $_bool;
-	public $themeFolder = TEMPLATE_FOLDER;
-
+class View {
+	/**
+	 * _cfg
+	 * 
+	 * @var mixed
+	 * @access private
+	 * @static
+	 */
+	private static $_cfg = array(
+		"cache_header" => null,
+		"cache_lifetime" => 3600,
+		"caching" => false,
+		"dir_cache" => "Application/cache/",
+		"dir_tpl" => "Application/template/",
+		"error_type" => E_USER_ERROR,
+		"ext_cache" => ".cache.html",
+		"ext_tpl" => ".html"
+	);
 
 	/**
-	 * set function.
-	 *
-	 * @access public
-	 * @param mixed $s
-	 * @param mixed $v
-	 * @return void
+	 * _tpl
+	 * 
+	 * @var mixed
+	 * @access private
 	 */
-	public function set($s,$v){
-		$this->_vars[$s]=$v;
-	}
+	private $_tpl = array(
+		"cached_files" => array(),
+		"compiled" => null,
+		"name" => null
+	);
 
 	/**
-	 * change function.
-	 *
-	 * @access public
-	 * @param mixed $s
-	 * @param mixed $v
-	 * @return void
+	 * _vars
+	 * 
+	 * (default value: array())
+	 * 
+	 * @var array
+	 * @access private
 	 */
-	public function change($s,$v){
-		if(isset($this->_vars[$s])){
-			$this->_vars[$s]=$v;
-		}
-	}
-
-
-	/**
-	 * partial function.
-	 *
-	 * @access public
-	 * @param mixed $v
-	 * @param mixed $f
-	 * @return void
-	 */
-	public function partial($v,$f){
-		$this->_partials[$v] = $f;
-	}
+	private $_vars = array();
 	
 	
 	/**
-	 * boolSet function.
+	 * __construct function.
 	 * 
 	 * @access public
-	 * @param mixed $v
-	 * @param mixed $f
+	 * @param mixed $controller (default: null)
 	 * @return void
 	 */
-	public function boolSet($v,$f){
-		$this->_bool[$v] = $f;
-	}
-
-
-	/**
-	 * call function.
-	 *
-	 * @access public
-	 * @param mixed $v
-	 * @param mixed $f
-	 * @param mixed $c
-	 * @return void
-	 */
-	public function call($v,$f,$c){
-		$this->_call[$c][$v] = $f;
-	}
-	
-	
-	/**
-	 * replaceContent function.
-	 * 
-	 * @access public
-	 * @param mixed $start
-	 * @param mixed $end
-	 * @param mixed $new
-	 * @param mixed $source
-	 * @return void
-	 */
-	function replaceContent($start, $end, $new, $source) {
-		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', $new, $source);
-	}
-	
-	
-	/**
-	 * dropContent function.
-	 * 
-	 * @access public
-	 * @param mixed $start
-	 * @param mixed $end
-	 * @param mixed $source
-	 * @return void
-	 */
-	function dropContent($start, $end, $source) {
-		return preg_replace('#('.preg_quote($start).')(.*?)('.preg_quote($end).')#si', '$2', $source);
-	}
-	
-	function extractUnit($string, $start, $end){
-		$pos = stripos($string, $start);
-		$str = substr($string, $pos);
-		$str_two = substr($str, strlen($start));
-		$second_pos = stripos($str_two, $end);
-		$str_three = substr($str_two, 0, $second_pos); 
-		$unit = trim($str_three); // remove whitespaces
-		return $unit;
-	}
-
-
-
-	/**
-	 * _generateCacheName function.
-	 *
-	 * @access public
-	 * @param mixed $template
-	 * @param mixed $folder (default: null)
-	 * @return void
-	 */
-	public function _generateCacheName($template,$folder=null){
-		if(!is_null($folder)){
-			$f1=$this->themeFolder."/".$folder."/";
-		}else{
-			$f1=DEFAULT_TEMPLATE_FOLDER;
+	function __construct($controller=null){
+		if(!is_null($controller)){
+			$this->setConfig("dir_tpl", TEMPLATE_FOLDER.$controller."/");
 		}
-		@$this->_templateFile=$f1.$template.'.html';
-	}
-
-
-	/**
-	 * _template function.
-	 *
-	 * @access public
-	 * @param mixed $file
-	 * @return void
-	 */
-	public function _template($file){
-		ob_start();
-		extract($this->_vars);
-		include($file);
-		$output = ob_get_contents();
-		ob_end_clean();
-		echo $output;
-	}
-
-
-	/**
-	 * _applyVars function.
-	 *
-	 * @access public
-	 * @param mixed $file
-	 * @return void
-	 */
-	public function _applyVars($file){
-		$source = file_get_contents($file);
-		$html = $this->_applyPartials($source);
-		$html = $this->_changeContents($html);
-		return $html;
-	}
-
-	/**
-	 * _applyPartials function.
-	 *
-	 * @access public
-	 * @param mixed $html
-	 * @return void
-	 */
-	public function _applyPartials($html){
-		if(is_array($this->_partials)){
-			foreach ($this->_partials as $key => $val) {
-				$source = file_get_contents($val);
-				$html = $this->_changeContents($html);
-				$html = str_replace('{=' . $key . '}', $source, $html);
-			}
-		}
-		return $html;
-	}
-
-
-	/**
-	 * _changeContents function.
-	 *
-	 * @access public
-	 * @param mixed $source
-	 * @return void
-	 */
-	public function _changeContents($source){
-		foreach ($this->_vars as $key2 => $value2) {
-			if(@!is_array($value) && @!is_array($key)){
-				@$source = $this->replaceContent('{$ '.$key2,' }', $value2, $source);
-				//@$source = str_replace('{$ ' . $key2 . ' }', $value2, $source);
-			}else{
-				@$source = $this->replaceContent('{$ '.$key2,' }', "", $source);
-			}
-		}
-		@$source = str_replace($this->_dropTag('{$ ',' }',$source), '', $source);
-
-		if($this->_call){
-			foreach ($this->_call as $key3 => $val3) {
-				if(class_exists($key3)){
-					$cont = new $key3;
-				}else{
-					include 'controller/'.$key3.'.php';
-					$cont = new $key3;
-				}
-				foreach($val3 as $key4 => $value4){
-					$source = str_replace('{func ' . $key4 . ' }', $cont->$key4(), $source);
-				}
-			}
+		if(CACHE_EXTENTION){
+			$this->setConfig("caching",true);
+			$this->setConfig("dir_cache", CACHE_FOLDER.$controller."/");
 		}
 		
-		if($this->_bool){
-			$check = array();
-			foreach ($this->_bool as $k => $v) {
-				if($v){
-					if(!in_array($content, $check)){
-						$content = $this->extractUnit($source,"{if $$k }","{/if}");
-						$source = $this->replaceContent("{if $$k }","{/if}",$content,$source);
-						$check[] = $content;
+	}
+
+	/**
+	 * _cacheWrite function.
+	 * 
+	 * @access private
+	 * @param mixed $cache_filename (default: null)
+	 * @return void
+	 */
+	private function _cacheWrite($cache_filename = null) {
+		if((int)self::$_cfg["cache_lifetime"] > 0 && $this->_tpl["compiled"] !== null) {
+			if(!is_writable(self::$_cfg["dir_cache"])) {
+				$this->_error("Failed to write cache file \"{$cache_filename}\" "
+					. "(cache directory \"" . self::$_cfg["dir_cache"] . "\" is not writable)");
+			}
+
+			file_put_contents($cache_filename, self::$_cfg["cache_header"] . $this->_tpl["compiled"]);
+		}
+	}
+
+
+	/**
+	 * _compile function.
+	 * 
+	 * @access private
+	 * @param mixed $template (default: null)
+	 * @param bool $init_only (default: false)
+	 * @return void
+	 */
+	private function _compile($template = null, $init_only = false) {
+		$filename = $cache_filename = null;
+
+		if($this->_tpl["compiled"] === null || $template != $this->_tpl["name"]) {
+			$this->_tpl["name"] = $template;
+
+			$filename = self::$_cfg["dir_tpl"] . $template . self::$_cfg["ext_tpl"];
+
+			if(self::$_cfg["caching"] && (int)self::$_cfg["cache_lifetime"] > 0) {
+				if(isset($this->_tpl["cached_files"][$template])) {
+					$this->_tpl["compiled"] = file_get_contents($this->_tpl["cached_files"][$template]);
+
+					return;
+				}
+
+				$cache_filename = self::$_cfg["dir_cache"] . rawurlencode($template . self::$_cfg["ext_cache"]);
+
+				if(file_exists($cache_filename)) {
+					if( (time() - filemtime($cache_filename)) < self::$_cfg["cache_lifetime"]) {
+						$this->_tpl["compiled"] = file_get_contents($cache_filename);
+
+						$this->_tpl["cached_files"][$template] = $cache_filename;
+
+						return;
+					} else {
+						unlink($cache_filename);
 					}
-				}else{
-					$source = $this->replaceContent("{if $$k }","{/if}","",$source);
 				}
 			}
+
+			if(!file_exists($filename)) {
+				$this->_error("Failed to load template \"{$filename}\" (template file not found)");
+
+				return;
+			}
+		} else {
+			return;
 		}
-		
-		/*
-		$source = str_replace($this->_dropTag("{* "," *}",$source), "<!-- ".$this->_getTagContent("{* "," *}",$source)." -->", $source);
-		$source = str_replace($this->_dropTag("{php}","{/php}",$source), eval($this->_getTagContent("{php}","{/php}",$source)), $source);
-		*/
-		
-		return $source;
-	}
 
-
-	/**
-	 * _each function.
-	 *
-	 * @access public
-	 * @param mixed $arr
-	 * @param mixed $key
-	 * @param mixed $val
-	 * @param mixed $out
-	 * @return void
-	 */
-	public function _each($arr,$key,$val,$out){
-		$all = null;
-		foreach($arr as $key2 => $val2){
-			$out = str_replace($key,$key2,$out);
-			$out = str_replace($val,$val2,$out);
-			$all .= $out;
+		if($init_only) {
+			return;
 		}
-		return $all;
+
+		$regex_tags = array(
+			"(\{\*(?:.*?))",
+			"((?:.*?)\*\})", // eof comment
+
+			"(\{func=(?:\w+\(.*?\))\})",
+
+			"(\{if.*?\}.*?\{\/if\})",
+
+			"(\{include=(?:.*?)\})",
+
+			"(\{literal\})",
+			"(\{\/literal\})", // eof literal
+
+			"(\{loop=\\$(?:\w+)\})",
+			"(\{\/loop\})" // eof loop
+		);
+
+		$regex_tags = "/" . implode("|", $regex_tags) . "/";
+
+		$template_parts = preg_split($regex_tags, file_get_contents($filename), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+		$in_comment = $in_loop = 0;
+		$in_literal = false;
+		$in_loops = array();
+
+		while($raw = array_shift($template_parts)) {
+			if($in_comment && preg_match("/(?:.*?)\*\}/", $raw)) {
+				$in_comment--;
+			} else if($in_comment) {
+					if(preg_match("/\{\*(?:.*?)/", $raw)) {
+						$in_comment++;
+					}
+				} else if(preg_match("/\{\*(?:.*?)/", $raw)) {
+					$in_comment++;
+				} else if($in_literal && preg_match("/\{\/literal\}/", $raw)) {
+					$in_literal = false;
+
+					$this->_tpl["compiled"] .= str_replace("{/literal}", null, $raw);
+				} else if($in_literal) {
+					$this->_tpl["compiled"] .= $raw;
+				} else if(preg_match("/\{literal\}/", $raw)) {
+					$in_literal = true;
+
+					$this->_tpl["compiled"] .= str_replace("{literal}", null, $raw);
+				} else if(preg_match("/\{func=(\w+)\((.*?)\)\}/", $raw, $matches)) {
+					if(isset($matches[1])) {
+						if(is_callable($matches[1])) {
+							$this->_tpl["compiled"] .= isset($matches[2]) ? call_user_func_array($matches[1], explode(",", $matches[2]))
+							: call_user_func($matches[1]);
+						}
+					}
+				} else if(preg_match("/(?:\{include=(.*?)\})/", $raw, $matches)) {
+					if(count($matches) && isset($matches[1])) {
+						$tmp = new self;
+						$tmp->set($this->_vars);
+
+						$this->_tpl["compiled"] .= $tmp->fetch($matches[1]);
+
+						unset($tmp);
+					}
+				} else if(preg_match("/\{loop=\\$(\w+)\}/", $raw, $matches)) {
+					if(isset($matches[1])) {
+						$in_loop++;
+
+						$in_loops[$in_loop] = $matches[1];
+					}
+				} else if($in_loop && preg_match("/\{\/loop\}/", $raw, $matches)) {
+					if(isset($in_loops[$in_loop])) {
+						unset($in_loops[$in_loop]);
+					}
+
+					$in_loop--;
+				} else if($in_loop && isset($in_loops[$in_loop])) {
+					if(isset($this->_vars[$in_loops[$in_loop]]) && is_array($this->_vars[$in_loops[$in_loop]])) {
+						$i = 0;
+
+						foreach($this->_vars[$in_loops[$in_loop]] as $k => $v) {
+							if(!is_array($v)) {
+								$this->_tpl["compiled"] .= str_replace("{\$counter}", $i, str_replace("{\$key}", $k, str_replace("{\$value}",
+											$this->_formatCompiledValue($v), $raw)));
+							} elseif(preg_match_all("/\{\\$(\w+)\.(\w+)\}/", $raw, $matches)) {
+								if(!empty($matches[2])) {
+									$tmp = $raw;
+
+									foreach($matches[2] as $el) {
+										if(isset($this->_vars[$in_loops[$in_loop]][$k][$el])) {
+											$tmp = str_replace("{\$counter}", $i, str_replace("{\$key}", $k, preg_replace("/\{\\\$value\.{$el}\}/",
+														$this->_formatCompiledValue($this->_vars[$in_loops[$in_loop]][$k][$el]), $tmp)));
+										}
+									}
+
+									$this->_tpl["compiled"] .= preg_replace("/\{\\$\w+\.\w+\}/", null, $tmp);
+								}
+
+							}
+
+							$i++;
+						}
+					}
+				} else if(preg_match("#\{if.*?\}.*?\{\/if\}#", $raw, $matches)) {
+					preg_match("#\{if \\$(\w+)\=?.*?\}#", $matches[0], $var);
+					$var = isset($var[1]) ? $var[1] : null;
+
+					preg_match("#\{if \\$\w+\=?.*?\}(.*?)(?:\{else\}|\{\/if\})#", $matches[0], $if);
+					$if = isset($if[1]) ? $if[1] : "";
+
+					$else = null;
+					if(strpos($matches[0], "{else}") !== false) {
+						preg_match("#\{else\}(.*?)\{\/if\}#", $matches[0], $else);
+						$else = isset($else[1]) ? $else[1] : "";
+					}
+
+					if(preg_match("#\{if \\$\w+\}.*?\{\/if\}#", $matches[0])) {
+						$this->_tpl["compiled"] .= $this->_replaceVars( isset($this->_vars[$var]) && $this->_vars[$var] ? $if : $else );
+					} else if(preg_match("#\{if \\$\w+(?:\=\=|\!\=|\>\=|\<\=|\>|\<).*?\}.*?\{\/if\}#", $matches[0])) {
+							preg_match("#\{if \\$\w+(\=\=|\!\=|\>\=|\<\=|\>|\<)(.*?)\}#", $matches[0], $condition);
+
+							if(isset($condition[1]) && isset($condition[2]) && isset($this->_vars[$var])) {
+								$true = false;
+
+								eval(" \$true = \$this->_vars[\$var] {$condition[1]} \$condition[2]; ");
+
+								$this->_tpl["compiled"] .= $this->_replaceVars( $true ? $if : $else );
+							} else {
+								$this->_tpl["compiled"] .= $this->_replaceVars($else);
+							}
+						}
+				} else {
+				$this->_tpl["compiled"] .= $this->_replaceVars($raw);
+			}
+		}
+
+		if($cache_filename) {
+			$this->_cacheWrite($cache_filename);
+		}
 	}
 
 
 	/**
-	 * _getTagContent function.
-	 *
-	 * @access public
-	 * @param mixed $start
-	 * @param mixed $end
-	 * @param mixed $content
+	 * _error function.
+	 * 
+	 * @access private
+	 * @param mixed $error_message (default: null)
 	 * @return void
 	 */
-	public function _getTagContent($start,$end,$content){
-		@$tag = explode($start,$content);
-		@$tag = explode($end,$tag[1]);
-		return $tag[0];
+	private function _error($error_message = null) {
+		if(self::$_cfg["error_type"]) {
+			trigger_error($error_message, self::$_cfg["error_type"]);
+		}
 	}
 
 	/**
-	 * _dropTag function.
-	 *
-	 * @access public
-	 * @param mixed $start
-	 * @param mixed $end
-	 * @param mixed $content
+	 * _formatCompiledValue function.
+	 * 
+	 * @access private
+	 * @param mixed $value (default: null)
+	 * @param mixed $tag (default: null)
 	 * @return void
 	 */
-	public function _dropTag($start,$end,$content){
-		return $start.''.$this->_getTagContent($start,$end,$content).''.$end;
+	private function _formatCompiledValue($value = null, $tag = null) {
+		if(!is_scalar($value)) {
+			return null;
+		}
+
+		preg_match_all("/\{\\$(?:[\w\.].*?)\|(\w+)\}/", $tag, $matches);
+
+		if(isset($matches[1][0])) {
+			$matches[1][0] = strtolower($matches[1][0]);
+
+			switch($matches[1][0]) {
+			case "b":
+			case "i":
+			case "u":
+				$value = "<{$matches[1][0]}>{$value}</{$matches[1][0]}>";
+				break;
+			case "capitalize":
+				$value = ucwords($value);
+				break;
+			case "escape":
+				$value = rawurlencode($value);
+				break;
+			case "lower":
+				$value = strtolower($value);
+				break;
+			case "upper":
+				$value = strtoupper($value);
+				break;
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * _replaceVars function.
+	 * 
+	 * @access private
+	 * @param mixed $html (default: null)
+	 * @return void
+	 */
+	private function _replaceVars($html = null) {
+		preg_match_all("/\{\\$(\w+)=(.*?)\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			if(isset($matches[1][$i])) {
+				$this->_vars[$matches[1][$i]] = isset($matches[2][$i]) ? $this->_formatCompiledValue($matches[2][$i]) : null;
+			}
+
+			$c = 0;
+			$html = str_replace($matches[0][$i], null, $html, $c);
+		}
+
+		preg_match_all("/\{\\$(\w+)(?:\|(\w+))?\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$val = null;
+
+			if(isset($matches[1][$i], $this->_vars[$matches[1][$i]])) {
+				$val = $this->_vars[$matches[1][$i]];
+			}
+
+			$html = str_replace($matches[0][$i], $this->_formatCompiledValue($val, $matches[0][$i]), $html);
+		}
+
+		preg_match_all("/\{\\$\.(\w+)\.(\w+)(?:\|(\w+))?\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$val = null;
+
+			if(isset($matches[1][$i], $matches[2][$i])) {
+				$var = $matches[2][$i];
+
+				switch($matches[1][$i]) {
+				case "const":
+					$val = defined($var) ? constant($var) : null;
+					break;
+				case "cookie":
+					$val = isset($_COOKIE[$var]) ? $_COOKIE[$var] : null;
+					break;
+				case "get":
+					$val = isset($_GET[$var]) ? $_GET[$var] : null;
+					break;
+				case "post":
+					$val = isset($_POST[$var]) ? $_POST[$var] : null;
+					break;
+				case "session":
+					$val = isset($_SESSION[$var]) ? $_SESSION[$var] : null;
+					break;
+				}
+			}
+
+			$html = str_replace($matches[0][$i], $this->_formatCompiledValue($val, $matches[0][$i]), $html);
+		}
+		unset($var);
+
+		preg_match_all("/\{\\$(\w+)\.(\w+)(?:\|(\w+))?\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$val = null;
+
+			if(isset($matches[1][$i], $matches[2][$i], $this->_vars[$matches[1][$i]]) && is_array($this->_vars[$matches[1][$i]])
+				&& array_key_exists($matches[2][$i], $this->_vars[$matches[1][$i]])) {
+				$val = $this->_vars[$matches[1][$i]][$matches[2][$i]];
+			}
+
+			$html = str_replace($matches[0][$i], $this->_formatCompiledValue($val, $matches[0][$i]), $html);
+		}
+
+		preg_match_all("/\{\\$(\w+)\-\>(\w+)(?:\|(\w+))?\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$val = null;
+
+			if(isset($matches[1][$i], $matches[2][$i], $this->_vars[$matches[1][$i]]) && is_object($this->_vars[$matches[1][$i]])
+				&& property_exists($this->_vars[$matches[1][$i]], $matches[2][$i])) {
+				$val = $this->_vars[$matches[1][$i]]->$matches[2][$i];
+			}
+
+			$html = str_replace($matches[0][$i], $this->_formatCompiledValue($val, $matches[0][$i]), $html);
+		}
+
+		preg_match_all("/\{\\$(\w+)\-\>([a-zA-Z_]+)\((.*?)\)\}/", $html, $matches);
+
+		for($i = 0; $i < count($matches[0]); $i++) {
+			$val = null;
+
+			if(isset($matches[1][$i], $matches[2][$i], $this->_vars[$matches[1][$i]]) && is_object($this->_vars[$matches[1][$i]])
+				&& method_exists($this->_vars[$matches[1][$i]], "{$matches[2][$i]}")) {
+				$val = isset($matches[3][$i]) ? $this->_vars[$matches[1][$i]]->$matches[2][$i]($matches[3][$i])
+				: $this->_vars[$matches[1][$i]]->$matches[2][$i]();
+			}
+
+			$html = str_replace($matches[0][$i], $this->_formatCompiledValue($val), $html);
+		}
+
+		return $html;
+	}
+
+	/**
+	 * cache function.
+	 * 
+	 * @access public
+	 * @param mixed $template (default: null)
+	 * @param int $cache_lifetime (default: 0)
+	 * @return void
+	 */
+	public function cache($template = null, $cache_lifetime = 0) {
+		if((int)$cache_lifetime > 0) {
+			self::setConfig("cache_lifetime", $cache_lifetime);
+		}
+
+		$this->_compile($template, true);
+
+		return isset($this->_tpl["cached_files"][$template]);
+	}
+
+	/**
+	 * cacheFlush function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function cacheFlush() {
+		array_map("unlink", glob(self::$_cfg["dir_cache"] . "*" . self::$_cfg["ext_cache"]));
 	}
 
 	/**
 	 * load function.
-	 *
+	 * 
 	 * @access public
-	 * @param mixed $template
-	 * @param mixed $folder (default: null)
+	 * @param mixed $template (default: null)
 	 * @return void
 	 */
-	public function load($template,$folder=null){
-		$this->_generateCacheName($template,$folder);
-		ob_start();
-		echo $this->_applyVars($this->_templateFile);
-		$output = ob_get_contents();
-		ob_end_clean();
-		echo $output;
+	public function load($template = null) {
+		$this->_compile($template);
+
+		print $this->_tpl["compiled"];
 	}
 
 	/**
-	 * getPageLimits function.
-	 *
+	 * engine function.
+	 * 
 	 * @access public
-	 * @param mixed $count
+	 * @static
 	 * @return void
 	 */
-	public function getPageLimits($count){
-		if(isset($_GET['page'])){
-			$current = ($_GET['page']-1)*$count;
-			$next = $current+$count;
-			//var_dump($current);
-			//var_dump($next);
+	public static function engine() {
+		static $view = null;
 
-			return array($current,$count);
-		}else{
-			return array(0,$count);
+		if($view === null) {
+			$view = new self;
+		}
+
+		return $view;
+	}
+
+	/**
+	 * fetch function.
+	 * 
+	 * @access public
+	 * @param mixed $template (default: null)
+	 * @return void
+	 */
+	public function fetch($template = null) {
+		$this->_compile($template);
+
+		return $this->_tpl["compiled"];
+	}
+
+	/**
+	 * get function.
+	 * 
+	 * @access public
+	 * @param mixed $var (default: null)
+	 * @return void
+	 */
+	public function get($var = null) {
+		if(isset($this->_vars[$var])) {
+			return $this->_vars[$var];
 		}
 	}
 
 	/**
-	 * parse function.
-	 *
+	 * set function.
+	 * 
 	 * @access public
-	 * @param mixed $file
+	 * @param mixed $var (default: null)
+	 * @param mixed $value (default: null)
 	 * @return void
 	 */
-	public function parse($file){
-		ob_start();
-		$source = file_get_contents($file);
-		$html = $this->_applyPartials($source);
-		$html = $this->_changeContents($html);
-		echo $html;
-		$output = ob_get_contents();
-		ob_end_clean();
-		return $output;
+	public function set($var = null, $value = null) {
+		if(!is_array($var)) {
+			$this->_vars[$var] = $value;
+		} else {
+			$this->_vars += $var;
+		}
 	}
 
 	/**
-	 * arraySet function.
-	 *
+	 * setConfig function.
+	 * 
 	 * @access public
-	 * @param mixed $s
-	 * @param mixed $a
+	 * @static
+	 * @param mixed $key (default: null)
+	 * @param mixed $value (default: null)
 	 * @return void
 	 */
-	public function arraySet($s,$a){
-		if(is_array($a)){
-			foreach($a as $k => $v){
-				$this->set($s."[".$k."]",$v);
+	public static function setConfig($key = null, $value = null) {
+		if(is_array($key)) {
+			foreach($k as $v) {
+				$this->setConfig($k, $v);
+			}
+		} else {
+			if(array_key_exists($key, self::$_cfg)) {
+				self::$_cfg[$key] = trim($value);
 			}
 		}
 	}

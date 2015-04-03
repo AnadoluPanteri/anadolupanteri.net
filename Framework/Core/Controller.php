@@ -73,8 +73,36 @@ class Controller
 
 	}
 	
+	/**
+	 * getClassName function.
+	 * 
+	 * @access public
+	 * @static
+	 * @return void
+	 */
 	public static function getClassName() {
         return get_called_class();
     }
+    
+    
+    /**
+	 * getPageLimits function.
+	 *
+	 * @access public
+	 * @param mixed $count
+	 * @return void
+	 */
+	public function getPageLimits($count){
+		if(isset($_GET['page'])){
+			$current = ($_GET['page']-1)*$count;
+			$next = $current+$count;
+			//var_dump($current);
+			//var_dump($next);
+
+			return array($current,$count);
+		}else{
+			return array(0,$count);
+		}
+	}
 }
 ?>

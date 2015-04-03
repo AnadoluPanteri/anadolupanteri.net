@@ -380,6 +380,9 @@ class View {
 				case "session":
 					$val = isset($_SESSION[$var]) ? $_SESSION[$var] : null;
 					break;
+				case "server":
+					$val = isset($_SERVER[$var]) ? $_SERVER[$var] : null;
+					break;	
 				}
 			}
 

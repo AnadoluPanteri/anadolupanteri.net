@@ -93,80 +93,38 @@ class HTML
 	public static function body_end(){
 		return '</body>';
 	}
-
+	
+	
+	
 	/**
-	 * js_file function.
-	 *
+	 * js function.
+	 * 
 	 * @access public
-	 * @param mixed $obje
+	 * @param mixed $controller
+	 * @param mixed $name
 	 * @return void
 	 */
-	public function js_file($obje){
-		if(isset($obje) && $obje!=null){
-			return "\t".'<script type="text/javascript" src="'.$folder.'js/'.$obje.'.js"></script>'."\n";
+	public function js($controller,$name){
+		if(isset($controller) && isset($name)){
+			return '<script type="text/javascript" src="'.TEMPLATE_FOLDER.$controller.'/'.$name.'.js"></script>';
 		}
 	}
-
-
-	/**
-	 * css_file function.
-	 *
-	 * @access public
-	 * @param mixed $obje
-	 * @param mixed $adds (default: null)
-	 * @return void
-	 */
-	public function css_file($obje,$adds=null){
-		if(isset($obje) && $obje!=null){
-			return "\t".'<link rel="stylesheet" type="text/css" href="'.$folder.'css/'.$obje.'.css" '.$adds.'/>'."\n";
-		}
-	}
-
-
-
-	/**
-	 * js_custom function.
-	 *
-	 * @access public
-	 * @static
-	 * @param mixed $obje
-	 * @return void
-	 */
-	public static function js_custom($obje){
-		if(isset($obje) && $obje!=null){
-			return "\t".'<script type="text/javascript" src="'.$obje.'.js"></script>'."\n";
-		}
-	}
-
-
-	/**
-	 * css_custom function.
-	 *
-	 * @access public
-	 * @static
-	 * @param mixed $obje
-	 * @return void
-	 */
-	public static function css_custom($obje){
-		if(isset($obje) && $obje!=null){
-			return "\t".'<link rel="stylesheet" type="text/css" href="'.$obje.'.css"/>'."\n";
-		}
-	}
-
-
+	
+	
 	/**
 	 * css function.
-	 *
+	 * 
 	 * @access public
-	 * @static
-	 * @param mixed $obje
+	 * @param mixed $controller
+	 * @param mixed $name
 	 * @return void
 	 */
-	public static function css($obje){
-		if(isset($obje) && $obje!=null){
-			return '<link rel="stylesheet" type="text/css" href="'.$obje.'"/>';
+	public function css($controller,$name){
+		if(isset($controller) && isset($name)){
+			return'<link rel="stylesheet" type="text/css" href="'.TEMPLATE_FOLDER.$controller.'/'.$name.'.css"/>';
 		}
 	}
+
 
 	/**
 	 * css_template function.

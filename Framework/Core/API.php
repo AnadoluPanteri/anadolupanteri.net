@@ -19,7 +19,7 @@ class API
 	 * @access public
 	 * @return void
 	 */
-	public function __construct(){
+	public function __construct($params=null){
 		$uri = parse_url($_SERVER['REQUEST_URI']);
 		$query = isset($uri['query']) ? $uri['query'] : '';
 		$uri = isset($uri['path']) ? rawurldecode($uri['path']) : '';
@@ -49,6 +49,31 @@ class API
 		unset($_GET['options']);
 		foreach ($_GET as $key => $val){
 			$this->where[$key]=$val;
+		}
+		
+		if($params==null){
+			$this->params = $_POST;
+		}else{
+			$this->params = $this->objectToArray($params);
+		}
+	}
+	
+	
+	/**
+	 * objectToArray function.
+	 * 
+	 * @access public
+	 * @param mixed $object
+	 * @return void
+	 */
+	function objectToArray($object){
+		if(is_object($object)){
+			$object = get_object_vars($object);
+		}
+		if(is_array($object)){
+			return array_map(array($this,__FUNCTION__),$object);
+		}else{
+			return $object;
 		}
 	}
 
@@ -260,7 +285,7 @@ class API
 	 */
 	public function post(){
 		$model = $this->model;
-		$post = new $model($_POST);
+		$post = new $model($this->params);
 
 		$result['status'] = false;
 		if(isset($this->id)){

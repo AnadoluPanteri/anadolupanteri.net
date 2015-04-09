@@ -152,6 +152,7 @@ class Boot
 		$this->_controllerPath = APPFOLDER."/controller/";
 		$this->_pageNotFound = APPFOLDER."/public/404.html";
 		@header('X-Powered-By: BlueJacket');
+		@header('Server: BlueJacket Framework Server');
 		@ini_set("expose_php","off");
 	}
 

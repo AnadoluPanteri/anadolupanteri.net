@@ -121,7 +121,7 @@ class HTML
 	 */
 	public function css($controller,$name){
 		if(isset($controller) && isset($name)){
-			return'<link rel="stylesheet" type="text/css" href="'.TEMPLATE_FOLDER.$controller.'/'.$name.'.css"/>';
+			return'<link rel="stylesheet" type="text/css" href="/'.TEMPLATE_FOLDER.$controller.'/'.$name.'.css"/>';
 		}
 	}
 

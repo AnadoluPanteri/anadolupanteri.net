@@ -12,6 +12,7 @@ class Model
 	 * @return void
 	 */
 	public function __construct(array $properties=array()){
+		$this->error = new Error();
 		$this->db = new DB();
 		$this->db->table($this->table());
 

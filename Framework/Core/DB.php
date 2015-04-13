@@ -63,7 +63,7 @@ class DB
 	 * @return void
 	 */
 	public function __construct(){
-		$this->boot = new Boot();
+		$this->error = new Error();
 
 		$this->_config = array(
 			"driver" => DB_DRIVER,
@@ -152,15 +152,14 @@ class DB
 				if($out){
 					$this->output = $out;
 				}else{
-					throw new Exception("Output not array!");
+					throw new Exception("Output not array! <br> Query: ".$this->_query);
 				}
 			}else{
-				throw new Exception("Query is null!");
+				throw new Exception("Query is null! <br> Query: ".$this->_query);
 			}
 		}catch(Exception $e){
 			if(APP_DEBUGING){
-				$this->boot->err("Query Failed: ".$e->getMessage());
-				$this->boot->err('<br> Query: '.$this->_query);
+				$this->error->show("Query Failed: ".$e->getMessage());
 			}
 		}
 	}
@@ -175,15 +174,14 @@ class DB
 		try{
 			if(isset($this->_query)){
 				if(!$this->pdo->exec($this->_query)){
-					throw new Exception("Output not array!");
+					throw new Exception("Output not array! <br> Query: ".$this->_query);
 				}
 			}else{
-				throw new Exception("Query is null!");
+				throw new Exception("Query is null! <br> Query: ".$this->_query);
 			}
 		}catch(Exception $e){
 			if(APP_DEBUGING){
-				$this->boot->err("Query Failed: ".$e->getMessage());
-				$this->boot->err('<br> Query: '.$this->_query);
+				$this->error->show("Query Failed: ".$e->getMessage());
 			}
 			return false;
 		}

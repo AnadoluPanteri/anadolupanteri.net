@@ -17,7 +17,11 @@ class Table
 	 * @return void
 	 */
 	function __construct($model, $options=array()){
-		$this->model = new $model();
+		$error = new Error();
+		if($error->checkClass($model)){
+			$this->model = new $model();
+		}
+		
 
 
 		if(isset($options["search"]) && is_array($options["search"])){

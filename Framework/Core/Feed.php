@@ -2,6 +2,7 @@
 /**
  * Feed class.
  */
+namespace Bluejacket; 
 class Feed
 {
 	/**

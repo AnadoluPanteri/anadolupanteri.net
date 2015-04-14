@@ -2,6 +2,7 @@
 /**
  * Bower class.
  */
+namespace Bluejacket; 
 class Bower
 {
 	/**

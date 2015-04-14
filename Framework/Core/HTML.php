@@ -2,6 +2,7 @@
 /**
  * HTML class.
  */
+namespace Bluejacket; 
 class HTML
 {
 

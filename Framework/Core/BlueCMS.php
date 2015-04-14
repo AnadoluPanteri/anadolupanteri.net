@@ -2,6 +2,7 @@
 /**
  * BlueCMS class.
  */
+namespace Bluejacket; 
 class BlueCMS 
 { 
 	/**

@@ -1,4 +1,5 @@
 <?php
+namespace Bluejacket; 
 if (version_compare(PHP_VERSION, '5.0.0', '<')) exit("Sorry, this version of BlueJacket Mailer will only run on PHP version 5 or greater!\n");
 /**
  * Mailer class.

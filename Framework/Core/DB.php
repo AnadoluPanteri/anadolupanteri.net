@@ -2,6 +2,7 @@
 /**
  * DB class.
  */
+namespace Bluejacket; 
 class DB
 {
 	/**
@@ -85,7 +86,7 @@ class DB
 	 */
 	public function _connect(){
 		try {
-			@$this->pdo = new PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
+			@$this->pdo = new \PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
 		} catch (PDOException $e) {
 			if(APP_DEBUGING){
 				$this->boot->err("Connection failed: ".$e->getMessage());

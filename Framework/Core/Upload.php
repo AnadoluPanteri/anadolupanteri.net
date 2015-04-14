@@ -2,6 +2,7 @@
 /**
  * Upload class.
  */
+namespace Bluejacket; 
 class Upload
 {
 	public $file;

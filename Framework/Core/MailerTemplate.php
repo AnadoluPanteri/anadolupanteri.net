@@ -2,6 +2,7 @@
 /**
  * MailTemplate class.
  */
+namespace Bluejacket; 
 class MailTemplate
 {
 	public $_vars = array();

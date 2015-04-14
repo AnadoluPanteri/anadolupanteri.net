@@ -2,6 +2,7 @@
 /**
  * Cache class.
  */
+namespace Bluejacket; 
 class Cache
 {
 	/**

@@ -2,6 +2,7 @@
 /**
  * Helpers class.
  */
+namespace Bluejacket; 
 class Helpers
 {
 	/**

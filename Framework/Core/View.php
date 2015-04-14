@@ -2,6 +2,7 @@
 /**
  * View class.
  */
+namespace Bluejacket;
 class View {
 	/**
 	 * _cfg

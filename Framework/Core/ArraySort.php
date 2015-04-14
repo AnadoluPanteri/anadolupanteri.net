@@ -2,6 +2,7 @@
 /**
  * ArraySort class.
  */
+namespace Bluejacket;
 class ArraySort
 {
 	/**

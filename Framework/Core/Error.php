@@ -4,7 +4,8 @@
  * 
  * @extends Exception
  */
-class Error extends Exception
+namespace Bluejacket; 
+class Error extends \Exception
 {
 	public function checkClass($class){
 		if (!class_exists($class)) {

@@ -2,6 +2,7 @@
 /**
  * API class.
  */
+namespace Bluejacket;  
 class API
 {
 

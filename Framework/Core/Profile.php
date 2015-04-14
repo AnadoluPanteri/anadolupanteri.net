@@ -2,6 +2,7 @@
 /**
  * Profile class.
  */
+namespace Bluejacket; 
 class Profile
 {
 

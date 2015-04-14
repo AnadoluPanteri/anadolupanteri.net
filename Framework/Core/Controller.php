@@ -2,6 +2,7 @@
 /**
  * Controller class.
  */
+namespace Bluejacket; 
 class Controller
 {
 	/**

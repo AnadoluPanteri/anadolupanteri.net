@@ -2,6 +2,7 @@
 /**
  * Table class.
  */
+namespace Bluejacket; 
 class Table
 {
 	public $model;

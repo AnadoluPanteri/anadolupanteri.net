@@ -2,6 +2,7 @@
 /**
  * Mathematica class.
  */
+namespace Bluejacket; 
 class Mathematica{
 	/**
 	 * float function.

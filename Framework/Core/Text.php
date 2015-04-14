@@ -2,6 +2,7 @@
 /**
  * Text class.
  */
+namespace Bluejacket; 
 class Text
 {
 	/**

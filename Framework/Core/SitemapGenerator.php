@@ -2,6 +2,7 @@
 /**
  * SitemapGenerator class.
  */
+namespace Bluejacket; 
 class SitemapGenerator
 {
 	/**

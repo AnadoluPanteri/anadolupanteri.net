@@ -2,6 +2,7 @@
 /**
  * Translate class.
  */
+namespace Bluejacket; 
 class Translate
 {
 	/**

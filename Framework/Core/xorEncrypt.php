@@ -2,6 +2,7 @@
 /**
  * xorCrypt class.
  */
+namespace Bluejacket; 
 class xorCrypt
 {
 	private $password = NULL;

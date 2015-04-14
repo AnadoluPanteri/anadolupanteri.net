@@ -2,6 +2,7 @@
 /**
  * Debug class.
  */
+namespace Bluejacket; 
 class Debug
 {
 	/**

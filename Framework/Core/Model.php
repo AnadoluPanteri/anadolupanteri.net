@@ -2,6 +2,7 @@
 /**
  * Model class.
  */
+namespace Bluejacket; 
 class Model
 {
 	/**

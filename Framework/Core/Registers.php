@@ -2,6 +2,7 @@
 /**
  * Registers class.
  */
+namespace Bluejacket; 
 class Registers
 {
 	/**

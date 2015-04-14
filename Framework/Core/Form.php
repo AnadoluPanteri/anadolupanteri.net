@@ -2,6 +2,7 @@
 /**
  * Form class.
  */
+namespace Bluejacket; 
 class Form
 {
 	public $out;

@@ -2,6 +2,7 @@
 /**
  * RSS class.
  */
+namespace Bluejacket; 
 class RSS
 {
 	public $RSS_Content = array();

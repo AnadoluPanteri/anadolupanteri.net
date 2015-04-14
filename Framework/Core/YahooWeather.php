@@ -2,6 +2,7 @@
 /**
  * YahooWeather class.
  */
+namespace Bluejacket; 
 class YahooWeather
 {
 	/**

@@ -283,13 +283,13 @@ class HTML
 	}
 
 	/**
-	 * hdirect function.
+	 * direct function.
 	 *
 	 * @access public
 	 * @param mixed $url
 	 * @return void
 	 */
-	public function hdirect($url){
+	public function direct($url){
 		header("Location: ".$url);
 	}
 

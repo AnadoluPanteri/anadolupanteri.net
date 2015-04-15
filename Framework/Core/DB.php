@@ -87,9 +87,9 @@ class DB
 	public function _connect(){
 		try {
 			@$this->pdo = new \PDO($this->_config['driver'].':host='.$this->_config['server'].';port='.$this->_config['port'].';dbname='.$this->_config['database'], $this->_config['username'], $this->_config['password']);
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			if(APP_DEBUGING){
-				$this->boot->err("Connection failed: ".$e->getMessage());
+				$this->error->show("Connection failed: ".$e->getMessage());
 			}
 		}
 		//$this->pdo->exec("SET NAMES UTF8");
@@ -153,12 +153,12 @@ class DB
 				if($out){
 					$this->output = $out;
 				}else{
-					throw new Exception("Output not array! <br> Query: ".$this->_query);
+					throw new \Exception("Output not array! <br> Query: ".$this->_query);
 				}
 			}else{
-				throw new Exception("Query is null! <br> Query: ".$this->_query);
+				throw new \Exception("Query is null! <br> Query: ".$this->_query);
 			}
-		}catch(Exception $e){
+		}catch(\Exception $e){
 			if(APP_DEBUGING){
 				$this->error->show("Query Failed: ".$e->getMessage());
 			}
@@ -175,12 +175,12 @@ class DB
 		try{
 			if(isset($this->_query)){
 				if(!$this->pdo->exec($this->_query)){
-					throw new Exception("Output not array! <br> Query: ".$this->_query);
+					throw new \Exception("Output not array! <br> Query: ".$this->_query);
 				}
 			}else{
-				throw new Exception("Query is null! <br> Query: ".$this->_query);
+				throw new \Exception("Query is null! <br> Query: ".$this->_query);
 			}
-		}catch(Exception $e){
+		}catch(\Exception $e){
 			if(APP_DEBUGING){
 				$this->error->show("Query Failed: ".$e->getMessage());
 			}
